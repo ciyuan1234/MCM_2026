@@ -19,6 +19,6 @@
 | 模型选择量级检查 | 判断是否可集总、可稳态、可一维化 | `analysis/model_metrics.py`、`tests/test_model_metrics.py` | 通过 |
 | 结论数值追溯 | 结论中的关键值来自结果文件 | `tests/test_q1_conclusion.py` | 通过 |
 | 独立复算 | 独立实现或不同数值方案复核 | 尚未执行 | 待开始 |
-| 问题 2 验证 | 变物性全过程 | `docs/problem_2_model.md`、`docs/problem_2_decision_log.md` | 模型文档已建，待确认 |
+| 问题 2 验证 | 变物性全过程 | `tests/test_material.py`、`tests/test_solver.py::test_q2_deterministic_regression_case`、`tests/test_result2.py` | 通过 |
 | 问题 3 验证 | 圆心达标时间 | 尚未建立 | 待开始 |
 | 问题 4 验证 | 移动边界和半径处理 | 尚未建立 | 待开始 |

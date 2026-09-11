@@ -152,6 +152,7 @@ def solve_constant_radius(
     hm_m_s: float,
     picard_tolerance: float,
     max_picard_iterations: int,
+    track_linear_residual: bool = False,
 ) -> SolverResult:
     time = np.asarray(time_s, dtype=float)
     if time.ndim != 1 or time.size < 2:
@@ -176,6 +177,7 @@ def solve_constant_radius(
 
     boundary_heat_integral = 0.0
     boundary_moisture_integral = 0.0
+    max_linear_system_residual = 0.0
 
     for step in range(1, n_times):
         current_time = float(time[step])
@@ -210,6 +212,21 @@ def solve_constant_radius(
                 hm_m_s,
             )
             moisture_solution = spsolve(moisture_matrix, moisture_rhs)
+
+            if track_linear_residual:
+                heat_residual = heat_matrix.dot(temperature_solution) - heat_rhs
+                moisture_residual = moisture_matrix.dot(moisture_solution) - moisture_rhs
+                heat_scale = max(float(np.linalg.norm(heat_rhs, ord=np.inf)), 1e-30)
+                moisture_scale = max(
+                    float(np.linalg.norm(moisture_rhs, ord=np.inf)),
+                    1e-30,
+                )
+                max_linear_system_residual = max(
+                    max_linear_system_residual,
+                    float(np.linalg.norm(heat_residual, ord=np.inf)) / heat_scale,
+                    float(np.linalg.norm(moisture_residual, ord=np.inf))
+                    / moisture_scale,
+                )
 
             error = max(
                 float(np.max(np.abs(temperature_solution - temperature_guess))),
@@ -278,6 +295,8 @@ def solve_constant_radius(
         / max(abs(internal_moisture_change), abs(boundary_moisture_integral), 1e-30),
         "max_picard_iterations": float(np.max(picard_history)),
     }
+    if track_linear_residual:
+        diagnostics["linear_system_residual_max"] = max_linear_system_residual
     return SolverResult(
         time_s=time,
         radius_m=grid.radius_m.copy(),

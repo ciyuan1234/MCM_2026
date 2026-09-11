@@ -2,14 +2,21 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { FileBlob, SpreadsheetFile } from "@oai/artifact-tool";
 
-const [solutionPath, outputPath] = process.argv.slice(2);
-if (!solutionPath || !outputPath) {
-  throw new Error("usage: node analysis/build_result1.mjs <solution.json> <result.xlsx>");
+const [solutionPath, outputPath, templatePath, sheetNamesArg] = process.argv.slice(2);
+if (!solutionPath || !outputPath || !templatePath || !sheetNamesArg) {
+  throw new Error(
+    "usage: node analysis/build_two_sheet_workbook.mjs "
+      + "<solution.json> <result.xlsx> <template.xlsx> <sheet1,sheet2>",
+  );
 }
 
 const solution = JSON.parse(await fs.readFile(solutionPath, "utf8"));
+const sheetNames = sheetNamesArg.split(",").map((name) => name.trim());
+if (sheetNames.length !== 2) {
+  throw new Error("exactly two sheet names are required");
+}
 const workbook = await SpreadsheetFile.importXlsx(
-  await FileBlob.load("附件/附件3/result1.xlsx"),
+  await FileBlob.load(templatePath),
 );
 
 const letters = [];
@@ -39,8 +46,8 @@ const header = [["时间\\到药材中心的距离", ...distanceCm]];
 const timeValues = time.map((value) => [value]);
 
 for (const [sheetName, matrix] of [
-  ["温度", solution.temperature_c],
-  ["水分浓度", solution.moisture_dry_basis],
+  [sheetNames[0], solution.temperature_c],
+  [sheetNames[1], solution.moisture_dry_basis],
 ]) {
   const sheet = workbook.worksheets.getItem(sheetName);
   sheet.getRange(`A1:${lastColumn}1`).values = header;
@@ -80,13 +87,13 @@ for (const [sheetName, matrix] of [
 workbook.recalculate();
 
 const preview = await workbook.render({
-  sheetName: "温度",
+  sheetName: sheetNames[0],
   range: "A1:F20",
   scale: 1,
   format: "png",
 });
 await fs.writeFile(
-  "/private/tmp/result1_temperature_preview.png",
+  `/private/tmp/${path.basename(outputPath)}_${sheetNames[0]}_preview.png`,
   new Uint8Array(await preview.arrayBuffer()),
 );
 

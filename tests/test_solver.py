@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.material import q1_properties
+from src.material import q1_properties, q2_properties
 from src.radial_solver import make_radial_grid, solve_constant_radius
 
 
@@ -76,3 +76,27 @@ def test_deterministic_regression_case() -> None:
     assert np.isclose(result.temperature_c[-1, -1], 35.057193738586705, atol=1e-9)
     assert np.isclose(result.moisture_dry_basis[-1, 0], 2.55, atol=1e-9)
     assert np.isclose(result.moisture_dry_basis[-1, -1], 2.3673016021297637, atol=1e-9)
+
+
+def test_q2_deterministic_regression_case() -> None:
+    time = np.arange(61, dtype=float)
+    grid = make_radial_grid(radius_m=0.02, dr_m=0.001)
+    result = solve_constant_radius(
+        grid=grid,
+        time_s=time,
+        initial_temperature_c=28.0,
+        initial_moisture_dry_basis=2.55,
+        boundary_temperature_k=lambda _: 60.0 + 273.15,
+        boundary_moisture_dry_basis=lambda _: 0.02,
+        property_function=q2_properties,
+        h_w_m2_k=25.0,
+        hm_m_s=8e-7,
+        picard_tolerance=1e-10,
+        max_picard_iterations=40,
+        track_linear_residual=True,
+    )
+    assert np.isclose(result.temperature_c[-1, 0], 28.00011854062018, atol=1e-9)
+    assert np.isclose(result.temperature_c[-1, -1], 33.144551730599915, atol=1e-9)
+    assert np.isclose(result.moisture_dry_basis[-1, 0], 2.55, atol=1e-9)
+    assert np.isclose(result.moisture_dry_basis[-1, -1], 2.379332051089434, atol=1e-9)
+    assert result.diagnostics["linear_system_residual_max"] < 1e-12

@@ -32,22 +32,36 @@ def verify_result1_workbook(
     expected_moisture: np.ndarray,
     tolerance: float = 5e-5,
 ) -> None:
+    verify_two_sheet_workbook(
+        path,
+        ("温度", "水分浓度"),
+        expected_time_s,
+        expected_radius_m,
+        (expected_temperature_c, expected_moisture),
+        tolerance,
+    )
+
+
+def verify_two_sheet_workbook(
+    path: Path,
+    sheet_names: tuple[str, str],
+    expected_time_s: np.ndarray,
+    expected_radius_m: np.ndarray,
+    expected_matrices: tuple[np.ndarray, np.ndarray],
+    tolerance: float = 5e-5,
+) -> None:
     workbook = load_workbook(path, read_only=True, data_only=True)
     try:
-        _verify_sheet(
-            workbook["温度"],
-            expected_time_s,
-            expected_radius_m,
-            expected_temperature_c,
-            tolerance,
-        )
-        _verify_sheet(
-            workbook["水分浓度"],
-            expected_time_s,
-            expected_radius_m,
-            expected_moisture,
-            tolerance,
-        )
+        if sheet_names[0] not in workbook.sheetnames or sheet_names[1] not in workbook.sheetnames:
+            raise AssertionError(f"{path.name}: expected sheets {sheet_names}")
+        for sheet_name, expected_values in zip(sheet_names, expected_matrices):
+            _verify_sheet(
+                workbook[sheet_name],
+                expected_time_s,
+                expected_radius_m,
+                expected_values,
+                tolerance,
+            )
     finally:
         workbook.close()
 

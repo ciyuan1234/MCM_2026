@@ -21,10 +21,17 @@ from matplotlib.colors import Normalize
 import numpy as np
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SOLUTION_PATH = PROJECT_ROOT / "outputs" / "result1_solution.json"
+DEFAULT_SOLUTION_PATHS = {
+    1: PROJECT_ROOT / "outputs" / "result1_solution.json",
+    2: PROJECT_ROOT / "outputs" / "result2_solution.json",
+}
+DEFAULT_SOLUTION_PATH = DEFAULT_SOLUTION_PATHS[1]
 DEFAULT_FIGURE_DIR = PROJECT_ROOT / "outputs" / "figures"
 
-PROFILE_TIMES_S = [100.0, 300.0, 600.0, 900.0, 1200.0, 1500.0, 1800.0]
+PROFILE_TIMES_BY_PROBLEM = {
+    1: [100.0, 300.0, 600.0, 900.0, 1200.0, 1500.0, 1800.0],
+    2: [1800.0, 3600.0, 5400.0, 7200.0, 9000.0, 10800.0],
+}
 CENTER_COLOR = "#0072B2"
 SURFACE_COLOR = "#D55E00"
 SOURCE_TEXT = (
@@ -197,9 +204,17 @@ def _save_figure(fig, figure_dir: Path, stem: str) -> list[Path]:
 
 
 def generate_figures(
-    solution_path: Path = DEFAULT_SOLUTION_PATH,
+    solution_path: Path | None = None,
     figure_dir: Path = DEFAULT_FIGURE_DIR,
+    problem: int = 1,
 ) -> list[Path]:
+    if problem not in DEFAULT_SOLUTION_PATHS:
+        raise ValueError(f"unsupported problem: {problem}")
+    if solution_path is None:
+        solution_path = DEFAULT_SOLUTION_PATHS[problem]
+    profile_times = PROFILE_TIMES_BY_PROBLEM[problem]
+    stage_label = "预热阶段" if problem == 1 else "变物性烘干阶段"
+
     with solution_path.open(encoding="utf-8") as file:
         solution = json.load(file)
 
@@ -217,15 +232,15 @@ def generate_figures(
         radius_cm,
         temperature_c,
         time_s,
-        PROFILE_TIMES_S,
+        profile_times,
         "温度 (°C)",
-        "预热阶段药材径向温度分布",
+        f"{stage_label}药材径向温度分布",
     )
     colorbar = fig.colorbar(scalar_map, ax=axis, pad=0.02)
     colorbar.set_label("时间 (s)")
     fig.tight_layout(rect=[0, 0.04, 1, 1])
     _add_source_note(fig)
-    paths.extend(_save_figure(fig, figure_dir, "fig1_q1_temperature_profiles"))
+    paths.extend(_save_figure(fig, figure_dir, f"fig1_q{problem}_temperature_profiles"))
     plt.close(fig)
 
     fig, axis = plt.subplots(figsize=(6.6, 4.4))
@@ -234,15 +249,15 @@ def generate_figures(
         radius_cm,
         moisture,
         time_s,
-        PROFILE_TIMES_S,
+        profile_times,
         "水分浓度 (kg/kg，干基)",
-        "预热阶段药材径向水分浓度分布",
+        f"{stage_label}药材径向水分浓度分布",
     )
     colorbar = fig.colorbar(scalar_map, ax=axis, pad=0.02)
     colorbar.set_label("时间 (s)")
     fig.tight_layout(rect=[0, 0.04, 1, 1])
     _add_source_note(fig)
-    paths.extend(_save_figure(fig, figure_dir, "fig2_q1_moisture_profiles"))
+    paths.extend(_save_figure(fig, figure_dir, f"fig2_q{problem}_moisture_profiles"))
     plt.close(fig)
 
     fig, axis = plt.subplots(figsize=(6.6, 4.4))
@@ -256,7 +271,7 @@ def generate_figures(
     )
     fig.tight_layout(rect=[0, 0.04, 1, 1])
     _add_source_note(fig)
-    paths.extend(_save_figure(fig, figure_dir, "fig3_q1_center_surface_temperature"))
+    paths.extend(_save_figure(fig, figure_dir, f"fig3_q{problem}_center_surface_temperature"))
     plt.close(fig)
 
     fig, axis = plt.subplots(figsize=(6.6, 4.4))
@@ -270,7 +285,7 @@ def generate_figures(
     )
     fig.tight_layout(rect=[0, 0.04, 1, 1])
     _add_source_note(fig)
-    paths.extend(_save_figure(fig, figure_dir, "fig4_q1_center_surface_moisture"))
+    paths.extend(_save_figure(fig, figure_dir, f"fig4_q{problem}_center_surface_moisture"))
     plt.close(fig)
 
     fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.2))
@@ -279,7 +294,7 @@ def generate_figures(
         radius_cm,
         temperature_c,
         time_s,
-        PROFILE_TIMES_S,
+        profile_times,
         "温度 (°C)",
         "径向温度分布",
     )
@@ -289,7 +304,7 @@ def generate_figures(
         radius_cm,
         moisture,
         time_s,
-        PROFILE_TIMES_S,
+        profile_times,
         "水分浓度 (kg/kg，干基)",
         "径向水分浓度分布",
     )
@@ -310,10 +325,10 @@ def generate_figures(
         "水分浓度 (kg/kg，干基)",
         "圆心与表面水分浓度",
     )
-    fig.suptitle("问题1：预热阶段温度与水分浓度演化", fontsize=14)
+    fig.suptitle(f"问题{problem}：{stage_label}温度与水分浓度演化", fontsize=14)
     fig.tight_layout(rect=[0, 0.04, 1, 0.96])
     _add_source_note(fig)
-    paths.extend(_save_figure(fig, figure_dir, "fig5_q1_summary_2x2"))
+    paths.extend(_save_figure(fig, figure_dir, f"fig5_q{problem}_summary_2x2"))
     plt.close(fig)
 
     return paths
@@ -321,10 +336,11 @@ def generate_figures(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--solution", type=Path, default=DEFAULT_SOLUTION_PATH)
+    parser.add_argument("--problem", type=int, choices=[1, 2], default=1)
+    parser.add_argument("--solution", type=Path, default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_FIGURE_DIR)
     args = parser.parse_args()
-    paths = generate_figures(args.solution, args.output_dir)
+    paths = generate_figures(args.solution, args.output_dir, args.problem)
     for path in paths:
         print(path)
 

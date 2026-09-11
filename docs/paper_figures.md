@@ -7,11 +7,11 @@
 | 图 3 | `fig3_q1_center_surface_temperature` | 圆心与表面温度随时间变化 | 同上 | 已生成 |
 | 图 4 | `fig4_q1_center_surface_moisture` | 圆心与表面水分浓度随时间变化 | 同上 | 已生成 |
 | 图 5 | `fig5_q1_summary_2x2` | 问题1温度与水分浓度演化汇总 | 同上 | 已生成 |
-| 图 6 | `fig1_q2_temperature_profiles` | 问题2径向温度分布 | `result2_solution.json` | 待问题2结果 |
-| 图 7 | `fig2_q2_moisture_profiles` | 问题2径向水分浓度分布 | 同上 | 待问题2结果 |
-| 图 8 | `fig3_q2_center_surface_temperature` | 问题2圆心与表面温度 | 同上 | 待问题2结果 |
-| 图 9 | `fig4_q2_center_surface_moisture` | 问题2圆心与表面水分浓度 | 同上 | 待问题2结果 |
-| 图 10 | `fig5_q2_summary_2x2` | 问题2演化汇总 | 同上 | 待问题2结果 |
+| 图 6 | `fig1_q2_temperature_profiles` | 问题2径向温度分布 | `result2_solution.json` | 已生成 |
+| 图 7 | `fig2_q2_moisture_profiles` | 问题2径向水分浓度分布 | 同上 | 已生成 |
+| 图 8 | `fig3_q2_center_surface_temperature` | 问题2圆心与表面温度 | 同上 | 已生成 |
+| 图 9 | `fig4_q2_center_surface_moisture` | 问题2圆心与表面水分浓度 | 同上 | 已生成 |
+| 图 10 | `fig5_q2_summary_2x2` | 问题2演化汇总 | 同上 | 已生成 |
 
 每张图同时输出 `.png`、`.pdf` 和 `.svg`，统一放在 `outputs/figures/`。所有图必须标注坐标、单位、图例、时间基准、数据来源和模型来源。
 
