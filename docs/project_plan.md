@@ -86,7 +86,8 @@
 - 已建立问题 2 的模型说明、决策日志和论文素材；求解器与结果等待模型确认后实施。
 - 问题 2 已实现：生成 `result2.xlsx`、表 3、表 4、论文图件和运行记录，等待用户确认结果。
 - 已建立每题交付标准并回补问题 2 的单位、模型选择依据、验证矩阵、物性范围和结论追溯。
-- 已根据独立复算（EXP-Q1-001）和用户确认的 `0.001 kg/kg` 阈值，将 Q1/Q2 生产网格细化到 `dr=0.0000625 m` 并重跑结果；细化分支已合入 `main`（合并提交 `a676a71`），合并后 26 项测试通过，结果文件与集成分支逐数组零差异。
+- 已根据独立复算（EXP-Q1-001）和用户确认的 `0.001 kg/kg` 阈值，将 Q1/Q2 生产网格细化到 `dr=0.0000625 m` 并重跑结果；细化分支已合入 `main`（提交 `eef7dea`），合并后 26 项测试通过，结果文件与集成分支逐数组零差异。
+- 派生结果 `outputs/result<n>_solution.json` 不再纳入版本控制（G-029）：细化网格后 `result2_solution.json` 达 169 MB，超过远程单文件上限；文件保留在本地，可由 `analysis/solve.py` 与 manifest 参数重建。
 - 用户于 2026-09-11 确认问题 1、问题 2 的模型与结果，并同意进入问题 3。
 - 实验候选分支 `exp/q1-explicit-fdm-001`、`feature/refine-q1-q2-grid`、`integrate/q1-q2-grid-refinement` 及其 worktree 已清理，删除前已做 `git bundle` 备份；EXP-Q1-001 结论留档于 `docs/experiments/EXP-Q1-001-independent-implementation/report.md`。
 - Git 本地基线已建立，主分支为 `main`，远程为 `origin`（`git@github.com:ciyuan1234/MCM_2026.git`）。
