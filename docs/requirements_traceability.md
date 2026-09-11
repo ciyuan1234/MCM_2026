@@ -40,3 +40,13 @@
 | 温度 | °C | K | °C | `src/material.py`、附件 1 |
 | 时间 | s 或 h | s | s 或 h | `src/config.py`、结果模板 |
 | 水分浓度 | kg/kg | kg/kg | kg/kg | 题目、附录 2～4 |
+
+## 模型选择依据追溯
+
+| 使用模型 | 推导依据 | 量化依据 | 证据 |
+| --- | --- | --- | --- |
+| 径向一维传热—扩散模型 | 能量守恒、Fourier 定律、质量守恒、Fick 定律、轴对称 | `L/R=12.5`，热渗透深度约 1.74 cm，水分渗透深度约 0.30 cm | `docs/problem_1_model.md`、`analysis/model_metrics.py` |
+| 非稳态而非稳态 | 预热阶段只有 30 min，温度尚未达到平衡 | `Fo=0.76` | `docs/problem_1_model.md` |
+| 非集总模型 | 内部径向温度和水分布不均匀 | `Bi=1.39` | `docs/problem_1_model.md` |
+| 采用 `D(C)` | 附录 2 直接给出浓度依赖扩散系数 | `D(2.55)=4.94e-9 m2/s` | `src/material.py` |
+| 采用 Robin 边界 | 题目给出 `h` 和 `hm` | `Bi=1.39`，传质 Biot 数约 3.24 | `docs/problem_1_model.md` |

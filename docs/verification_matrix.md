@@ -16,6 +16,7 @@
 | 插值端点 | 端点外保持最后值 | `tests/test_interpolators.py::test_piecewise_linear_exact_nodes_and_endpoint_hold` | 通过 |
 | 模板回读 | 导出后关键单元格与内存一致 | `analysis/solve.py` 调用 `verify_result1_workbook` | 通过 |
 | 运行记录 | 输入、参数、代码哈希、命令、环境 | `outputs/run_manifest.json` | 通过 |
+| 模型选择量级检查 | 判断是否可集总、可稳态、可一维化 | `analysis/model_metrics.py`、`tests/test_model_metrics.py` | 通过 |
 | 独立复算 | 独立实现或不同数值方案复核 | 尚未执行 | 待开始 |
 | 问题 2 验证 | 变物性全过程 | 尚未建立 | 待开始 |
 | 问题 3 验证 | 圆心达标时间 | 尚未建立 | 待开始 |
