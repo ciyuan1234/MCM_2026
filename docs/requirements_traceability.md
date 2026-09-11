@@ -30,3 +30,13 @@
 | `result2.xlsx` | 0～10800 s，1 s | 0～2 cm，0.1 cm | 温度、水分浓度 |
 | `result3.xlsx` | 0～结束，60 s | 0～2 cm，0.1 cm | Sheet1 |
 | `result4.xlsx` | 0～结束，60 s | 0～表面，0.1 cm | Sheet1 |
+
+## 单位约定追溯
+
+| 量 | 题目/附件 | 计算内核 | 输出 | 证据 |
+| --- | --- | --- | --- | --- |
+| 半径 | cm，首次为 2 cm | m，首次为 0.02 m | cm | `src/config.py`、`src/units.py` |
+| 到中心距离 | cm，0～2 cm | m，0～0.02 m | cm | `src/export_xlsx.py`、结果模板 |
+| 温度 | °C | K | °C | `src/material.py`、附件 1 |
+| 时间 | s 或 h | s | s 或 h | `src/config.py`、结果模板 |
+| 水分浓度 | kg/kg | kg/kg | kg/kg | 题目、附录 2～4 |

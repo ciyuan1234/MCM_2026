@@ -22,6 +22,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from src.config import (  # noqa: E402
     ATTACHMENT_1_PATH,
     CELSIUS_TO_KELVIN,
+    CYLINDER_RADIUS_M,
     DEFAULT_RADIAL_STEP_M,
     INITIAL_MOISTURE_DRY_BASIS,
     INITIAL_TEMPERATURE_C,
@@ -114,7 +115,7 @@ def _solve_problem_1(args: argparse.Namespace) -> None:
 
     n_steps = int(round(args.end_s / args.dt_s))
     time_s = np.arange(n_steps + 1, dtype=float) * args.dt_s
-    grid = make_radial_grid(radius_m=0.02, dr_m=args.dr_m)
+    grid = make_radial_grid(radius_m=CYLINDER_RADIUS_M, dr_m=args.dr_m)
     result = solve_constant_radius(
         grid=grid,
         time_s=time_s,
@@ -136,7 +137,7 @@ def _solve_problem_1(args: argparse.Namespace) -> None:
         "model": "constant-property radial heat and moisture diffusion",
         "initial_temperature_c": INITIAL_TEMPERATURE_C,
         "initial_moisture_dry_basis": INITIAL_MOISTURE_DRY_BASIS,
-        "radius_m": 0.02,
+        "radius_m": CYLINDER_RADIUS_M,
         "radial_step_m": args.dr_m,
         "time_step_s": args.dt_s,
         "end_time_s": args.end_s,
