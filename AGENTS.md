@@ -15,6 +15,7 @@
 - `docs/requirements_traceability.md`：题目要求到模型和结果的追溯表。
 - `docs/experiments/EXP-*/brief.md`：实验任务卡和停止条件。
 - `docs/paper_outline.md`、`docs/notation.md`、`docs/paper_figures.md`、`docs/paper_tables.md`：论文写作素材。
+- `docs/visualization_spec.md`：论文图件、对比图和视觉审查的统一规范。
 - `docs/problem_<n>_model.md`：对应小问的模型说明。
 - `docs/problem_<n>_decision_log.md`：对应小问的决策与理由。
 - `docs/problem_<n>_paper_materials.md`：对应小问的论文写作素材。
