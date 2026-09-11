@@ -1,0 +1,49 @@
+{
+  "problem": 1,
+  "timestamp": "2026-09-11T12:59:36.093778+08:00",
+  "command": "analysis/solve.py --problem 1",
+  "inputs": {
+    "attachment_1": "附件/附件1.xlsx",
+    "template": "附件/附件3/result1.xlsx"
+  },
+  "outputs": {
+    "solution_json": "outputs/result1_solution.json",
+    "workbook": "outputs/result1.xlsx"
+  },
+  "parameters": {
+    "problem": 1,
+    "model": "constant-property radial heat and moisture diffusion",
+    "initial_temperature_c": 28.0,
+    "initial_moisture_dry_basis": 2.55,
+    "radius_m": 0.02,
+    "radial_step_m": 0.001,
+    "time_step_s": 1.0,
+    "end_time_s": 1800.0,
+    "picard_tolerance": 1e-08,
+    "max_picard_iterations": 30,
+    "diagnostics": {
+      "boundary_heat_integral_j_per_m": 19211.524993660085,
+      "internal_energy_change_j_per_m": 19211.524993688992,
+      "heat_balance_relative_error": 1.5046894825187931e-12,
+      "boundary_moisture_integral": -0.0003240196281548634,
+      "internal_moisture_change": -0.00032401962815486736,
+      "moisture_balance_relative_error": 1.2213266066957693e-14,
+      "max_picard_iterations": 3.0
+    }
+  },
+  "code_hashes": {
+    "analysis/solve.py": "0e60d8512a8597bdf762691a78eec421bf35c1784d298accc37bc67250dee080",
+    "analysis/build_result1.mjs": "772032757e5a827f0409f6760dc8c1e5603244cfd61ffd5c7785a98bfd6bc828",
+    "src/config.py": "a3fba134d95a37b1b9ea9ab18598823f9ba9a65bea9c8377b158bfbd4997ebc6",
+    "src/interpolators.py": "a81faeaff7ff2b01f3fd81aa6afe4afa7e088ef0434f68b7c659cdbef509b3cc",
+    "src/material.py": "6416329f1e261d18ffd1dfb1d50d2b94dd5c2857e4439d1a9cf72b41ef711941",
+    "src/radial_solver.py": "1655d104e5cf37dd82fc84380a59b13e8a684c9e50579bb978d5bcd36bf3d617",
+    "src/export_xlsx.py": "08440d489c8cc495ca05fa9fc7844be81a1829e9b9fbcea9f8b1e3f07be000b9"
+  },
+  "environment": {
+    "python": "3.9.6",
+    "numpy": "2.0.2",
+    "scipy": "1.13.1",
+    "openpyxl": "3.1.5"
+  }
+}
