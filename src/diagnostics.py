@@ -17,6 +17,7 @@ from .config import (
     Q1_HEAT_CAPACITY_J_KG_K,
     Q1_THERMAL_CONDUCTIVITY_W_M_K,
 )
+from .material import q2_properties
 
 
 def q1_model_metrics() -> dict[str, float]:
@@ -52,4 +53,29 @@ def q1_model_metrics() -> dict[str, float]:
         ),
         "length_radius_ratio": CYLINDER_LENGTH_M / CYLINDER_RADIUS_M,
         "length_diameter_ratio": CYLINDER_LENGTH_M / (2.0 * CYLINDER_RADIUS_M),
+    }
+
+
+def q2_property_ranges(
+    moisture: np.ndarray,
+    temperature_k: np.ndarray,
+) -> dict[str, float]:
+    properties = q2_properties(moisture, temperature_k)
+    return {
+        "density_min_kg_m3": float(properties.density_kg_m3.min()),
+        "density_max_kg_m3": float(properties.density_kg_m3.max()),
+        "heat_capacity_min_j_kg_k": float(properties.heat_capacity_j_kg_k.min()),
+        "heat_capacity_max_j_kg_k": float(properties.heat_capacity_j_kg_k.max()),
+        "thermal_conductivity_min_w_m_k": float(
+            properties.thermal_conductivity_w_m_k.min()
+        ),
+        "thermal_conductivity_max_w_m_k": float(
+            properties.thermal_conductivity_w_m_k.max()
+        ),
+        "moisture_diffusivity_min_m2_s": float(
+            properties.moisture_diffusivity_m2_s.min()
+        ),
+        "moisture_diffusivity_max_m2_s": float(
+            properties.moisture_diffusivity_m2_s.max()
+        ),
     }

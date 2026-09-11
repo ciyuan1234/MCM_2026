@@ -19,6 +19,14 @@
 | 模型选择量级检查 | 判断是否可集总、可稳态、可一维化 | `analysis/model_metrics.py`、`tests/test_model_metrics.py` | 通过 |
 | 结论数值追溯 | 结论中的关键值来自结果文件 | `tests/test_q1_conclusion.py` | 通过 |
 | 独立复算 | 独立实现或不同数值方案复核 | 尚未执行 | 待开始 |
-| 问题 2 验证 | 变物性全过程 | `tests/test_material.py`、`tests/test_solver.py::test_q2_deterministic_regression_case`、`tests/test_result2.py` | 通过 |
+| 问题 2 物性公式 | 附录 3 公式正确 | `tests/test_material.py::test_q2_properties_match_appendix_3` | 通过 |
+| 问题 2 回归 | 变物性小规模确定性算例 | `tests/test_solver.py::test_q2_deterministic_regression_case` | 通过 |
+| 问题 2 水分守恒 | 内部水分变化与边界通量一致 | 相对误差 `2.3637e-15` | 通过 |
+| 问题 2 离散残差 | 离散热方程线性系统闭合 | 最大残差 `6.0203e-16` | 通过 |
+| 问题 2 空间收敛 | 至少两组空间网格 | `dr=2/1/0.5 mm` 对比 | 通过 |
+| 问题 2 时间收敛 | 至少两组时间步 | `dt=2/1 s` 对比 | 通过 |
+| 问题 2 模板回读 | `result2.xlsx` 与内存结果一致 | `tests/test_result2.py` | 通过 |
+| 问题 2 结论追溯 | 结论关键值来自结果文件 | `tests/test_q2_conclusion.py` | 通过 |
+| 问题 2 物性范围 | 量化附录 3 必要性 | `analysis/q2_metrics.py`、`tests/test_q2_metrics.py` | 通过 |
 | 问题 3 验证 | 圆心达标时间 | 尚未建立 | 待开始 |
 | 问题 4 验证 | 移动边界和半径处理 | 尚未建立 | 待开始 |
