@@ -9,8 +9,8 @@
 | 零驱动 | 无驱动时不变化 | `tests/test_solver.py::test_zero_drive_does_not_change_state` | 通过 |
 | 趋势检查 | 更热、更干边界下趋势正确 | `tests/test_solver.py::test_heating_and_drying_trends` | 通过 |
 | 守恒检查 | 内部变化与边界通量一致 | 热量误差 `1.5047e-12`，水分误差 `1.2213e-14` | 通过 |
-| 空间收敛 | 至少两组空间网格 | `dr=2 mm`、`dr=1 mm`、`dr=0.5 mm` 比较 | 通过 |
-| 时间收敛 | 至少两组时间步 | `dt=2 s` 对 `dt=1 s` 比较 | 通过 |
+| 空间收敛 | 至少两组空间网格 | `dr=0.125 mm` 对 `dr=0.0625 mm`：最大水分差 `3.51e-4 kg/kg` | 通过 |
+| 时间收敛 | 至少两组时间步 | `dt=1 s` 对 `dt=0.5 s`：最大水分差 `2.04e-4 kg/kg` | 通过 |
 | 回归检查 | 小规模确定性算例 | `tests/test_solver.py::test_deterministic_regression_case` | 通过 |
 | 数据完整性 | 无缺失、重复、倒序、非有限值 | `tests/test_interpolators.py` | 通过 |
 | 插值端点 | 端点外保持最后值 | `tests/test_interpolators.py::test_piecewise_linear_exact_nodes_and_endpoint_hold` | 通过 |
@@ -23,8 +23,8 @@
 | 问题 2 回归 | 变物性小规模确定性算例 | `tests/test_solver.py::test_q2_deterministic_regression_case` | 通过 |
 | 问题 2 水分守恒 | 内部水分变化与边界通量一致 | 相对误差 `2.3637e-15` | 通过 |
 | 问题 2 离散残差 | 离散热方程线性系统闭合 | 最大残差 `6.0203e-16` | 通过 |
-| 问题 2 空间收敛 | 至少两组空间网格 | `dr=2/1/0.5 mm` 对比 | 通过 |
-| 问题 2 时间收敛 | 至少两组时间步 | `dt=2/1 s` 对比 | 通过 |
+| 问题 2 空间收敛 | 至少两组空间网格 | `dr=0.125/0.0625 mm`：最大水分差 `1.89e-5 kg/kg` | 通过 |
+| 问题 2 时间收敛 | 至少两组时间步 | `dt=1/0.5 s`：最大水分差 `4.57e-5 kg/kg` | 通过 |
 | 问题 2 模板回读 | `result2.xlsx` 与内存结果一致 | `tests/test_result2.py` | 通过 |
 | 问题 2 结论追溯 | 结论关键值来自结果文件 | `tests/test_q2_conclusion.py` | 通过 |
 | 问题 2 物性范围 | 量化附录 3 必要性 | `analysis/q2_metrics.py`、`tests/test_q2_metrics.py` | 通过 |

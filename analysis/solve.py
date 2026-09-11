@@ -168,6 +168,7 @@ def _solve_constant_radius_problem(
         "initial_moisture_dry_basis": INITIAL_MOISTURE_DRY_BASIS,
         "radius_m": CYLINDER_RADIUS_M,
         "radial_step_m": args.dr_m,
+        "output_radial_step_cm": 0.1,
         "time_step_s": dt_s,
         "end_time_s": end_s,
         "picard_tolerance": args.picard_tol,
@@ -178,12 +179,23 @@ def _solve_constant_radius_problem(
     if not args.no_build_xlsx:
         sheet_names = ("温度", "水分浓度")
         _run_node_builder(json_path, xlsx_path, template_path, sheet_names)
+        output_radius_m = np.arange(0.0, CYLINDER_RADIUS_M + 1e-12, 0.001)
+        output_indices = []
+        for target_radius_m in output_radius_m:
+            index = int(np.argmin(np.abs(result.radius_m - target_radius_m)))
+            if not np.isclose(result.radius_m[index], target_radius_m, atol=1e-12):
+                raise ValueError(
+                    f"no computed grid node matches output radius {target_radius_m}"
+                )
+            output_indices.append(index)
+        output_temperature_c = result.temperature_c[:, output_indices]
+        output_moisture = result.moisture_dry_basis[:, output_indices]
         verify_two_sheet_workbook(
             xlsx_path,
             sheet_names,
             result.time_s,
-            result.radius_m,
-            (result.temperature_c, result.moisture_dry_basis),
+            output_radius_m,
+            (output_temperature_c, output_moisture),
         )
 
     manifest = {

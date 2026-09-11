@@ -27,18 +27,18 @@ def test_q1_conclusion_values_match_solution() -> None:
     index_1800 = _index(time_s, 1800.0)
 
     assert round(float(temperature_c[index_100, 0]), 4) == 28.0001
-    assert round(float(temperature_c[index_100, -1]), 4) == 28.1792
+    assert round(float(temperature_c[index_100, -1]), 4) == 28.1807
     assert round(float(moisture[index_100, 0]), 4) == 2.5500
-    assert round(float(moisture[index_100, -1]), 4) == 2.2886
+    assert round(float(moisture[index_100, -1]), 4) == 2.2476
 
-    assert round(float(temperature_c[index_1800, 0]), 4) == 33.5764
-    assert round(float(temperature_c[index_1800, -1]), 4) == 36.7860
+    assert round(float(temperature_c[index_1800, 0]), 4) == 33.5765
+    assert round(float(temperature_c[index_1800, -1]), 4) == 36.7863
     assert round(float(moisture[index_1800, 0]), 4) == 2.5500
-    assert round(float(moisture[index_1800, -1]), 4) == 1.5117
+    assert round(float(moisture[index_1800, -1]), 4) == 1.5103
 
     temperature_difference = (
         temperature_c[index_1800, -1] - temperature_c[index_1800, 0]
     )
     moisture_difference = moisture[index_1800, 0] - moisture[index_1800, -1]
-    assert round(float(temperature_difference), 4) == 3.2096
-    assert round(float(moisture_difference), 4) == 1.0382
+    assert round(float(temperature_difference), 4) == 3.2097
+    assert round(float(moisture_difference), 4) == 1.0397

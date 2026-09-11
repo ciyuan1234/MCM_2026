@@ -38,21 +38,48 @@ function roundedMatrix(matrix) {
 }
 
 const time = solution.time_s;
-const distanceCm = solution.radius_m.map((value) => Number((value * 100).toFixed(1)));
+const fullDistanceCm = solution.radius_m.map((value) => value * 100.0);
+const outputStepCm = 0.1;
+const outputMaxCm = Number((Math.max(...fullDistanceCm)).toFixed(10));
+const outputCount = Math.round(outputMaxCm / outputStepCm) + 1;
+const distanceCm = Array.from(
+  { length: outputCount },
+  (_, index) => Number((index * outputStepCm).toFixed(10)),
+);
+const outputIndices = distanceCm.map((target) => {
+  let bestIndex = 0;
+  let bestDistance = Math.abs(fullDistanceCm[0] - target);
+  for (let index = 1; index < fullDistanceCm.length; index += 1) {
+    const distance = Math.abs(fullDistanceCm[index] - target);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestIndex = index;
+    }
+  }
+  if (bestDistance > 1e-9) {
+    throw new Error(`no grid node matches output distance ${target} cm`);
+  }
+  return bestIndex;
+});
 const nRows = time.length;
 const nColumns = distanceCm.length;
 const lastColumn = columnName(nColumns);
 const header = [["时间\\到药材中心的距离", ...distanceCm]];
 const timeValues = time.map((value) => [value]);
 
+function sampleMatrix(matrix) {
+  return matrix.map((row) => outputIndices.map((index) => row[index]));
+}
+
 for (const [sheetName, matrix] of [
   [sheetNames[0], solution.temperature_c],
   [sheetNames[1], solution.moisture_dry_basis],
 ]) {
+  const sampledMatrix = sampleMatrix(matrix);
   const sheet = workbook.worksheets.getItem(sheetName);
   sheet.getRange(`A1:${lastColumn}1`).values = header;
   sheet.getRange(`A2:A${nRows + 1}`).values = timeValues;
-  sheet.getRange(`B2:${lastColumn}${nRows + 1}`).values = roundedMatrix(matrix);
+  sheet.getRange(`B2:${lastColumn}${nRows + 1}`).values = roundedMatrix(sampledMatrix);
 
   const headerRange = sheet.getRange(`A1:${lastColumn}1`);
   headerRange.format = {

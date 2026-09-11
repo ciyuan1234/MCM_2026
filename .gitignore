@@ -16,3 +16,7 @@ notes/
 
 # 本地 Agent 运行时状态目录，不属于项目交付物。
 .agy-acp/
+
+# 派生的完整数值结果：细化网格后单文件超过远程托管上限（>100 MB）。
+# 文件保留在本地输出目录，可由 `analysis/solve.py` 用 run_manifest 记录的参数重新生成。
+outputs/*_solution.json

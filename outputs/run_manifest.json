@@ -1,6 +1,6 @@
 {
   "problem": 2,
-  "timestamp": "2026-09-11T17:46:38.334995+08:00",
+  "timestamp": "2026-09-11T20:56:28.426349+08:00",
   "command": "analysis/solve.py --problem 2",
   "inputs": {
     "attachment_1": "附件/附件1.xlsx",
@@ -16,26 +16,27 @@
     "initial_temperature_c": 28.0,
     "initial_moisture_dry_basis": 2.55,
     "radius_m": 0.02,
-    "radial_step_m": 0.001,
+    "radial_step_m": 6.25e-05,
+    "output_radial_step_cm": 0.1,
     "time_step_s": 1.0,
     "end_time_s": 10800.0,
     "picard_tolerance": 1e-08,
     "max_picard_iterations": 30,
     "diagnostics": {
-      "boundary_heat_integral_j_per_m": 83741.613493723,
-      "internal_energy_change_j_per_m": 68983.50647632136,
-      "heat_balance_relative_error": 0.17623385079041803,
-      "boundary_moisture_integral": -0.0014678230246276801,
-      "internal_moisture_change": -0.0014678230246276836,
-      "moisture_balance_relative_error": 2.3636684353235615e-15,
+      "boundary_heat_integral_j_per_m": 83758.31860497255,
+      "internal_energy_change_j_per_m": 68998.06311835861,
+      "heat_balance_relative_error": 0.1762243527861083,
+      "boundary_moisture_integral": -0.0014670718688875614,
+      "internal_moisture_change": -0.0014670718688875573,
+      "moisture_balance_relative_error": 2.808293405945389e-15,
       "max_picard_iterations": 3.0,
-      "linear_system_residual_max": 6.020268314293896e-16
+      "linear_system_residual_max": 3.6158888677001046e-14
     }
   },
   "code_hashes": {
-    "analysis/solve.py": "ac9f05bf2da492ffc477110533a8ec465026b23b7578e7bc3bc27b086712285f",
-    "analysis/build_two_sheet_workbook.mjs": "e94848bb1980b1defb8c6d4bc45addb3cca33ded87ca71689d2e7afcd4199fa3",
-    "src/config.py": "4d50ada8267465efcd8dfa0324097c04383cd28369191db2fd3816e89f576e11",
+    "analysis/solve.py": "98a231eb888347ae6d8de32f609d1d3daac6e5bdd751e5aea003e73f61a7c8ff",
+    "analysis/build_two_sheet_workbook.mjs": "a29214d0c70795855e04ddc432211747ce00efc59c3396624ccc25c0219b1552",
+    "src/config.py": "b27f399e7fddac03e0f9dc2ed2300eda70ef56645e6f750706d0817266bfb13f",
     "src/interpolators.py": "a81faeaff7ff2b01f3fd81aa6afe4afa7e088ef0434f68b7c659cdbef509b3cc",
     "src/material.py": "6416329f1e261d18ffd1dfb1d50d2b94dd5c2857e4439d1a9cf72b41ef711941",
     "src/radial_solver.py": "25cf461252bcb57990cde4fa9721032af2e6fa806e3e105049748e578cd916c0",

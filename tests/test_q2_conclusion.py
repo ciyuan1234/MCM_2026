@@ -33,19 +33,19 @@ def test_q2_conclusion_values_match_solution() -> None:
     center = _radius_index(radius_m, 0.0)
     surface = _radius_index(radius_m, 2.0)
 
-    assert round(float(temperature_c[index_05h, center]), 4) == 32.1908
-    assert round(float(temperature_c[index_05h, surface]), 4) == 35.4146
+    assert round(float(temperature_c[index_05h, center]), 4) == 32.1907
+    assert round(float(temperature_c[index_05h, surface]), 4) == 35.4139
     assert round(float(moisture[index_05h, center]), 4) == 2.5499
-    assert round(float(moisture[index_05h, surface]), 4) == 1.6485
+    assert round(float(moisture[index_05h, surface]), 4) == 1.6487
 
-    assert round(float(temperature_c[index_3h, center]), 4) == 49.8495
-    assert round(float(temperature_c[index_3h, surface]), 4) == 49.9663
+    assert round(float(temperature_c[index_3h, center]), 4) == 49.8494
+    assert round(float(temperature_c[index_3h, surface]), 4) == 49.9664
     assert round(float(moisture[index_3h, center]), 4) == 1.7662
-    assert round(float(moisture[index_3h, surface]), 4) == 1.0078
+    assert round(float(moisture[index_3h, surface]), 4) == 1.0081
 
     temperature_difference = (
         temperature_c[index_3h, surface] - temperature_c[index_3h, center]
     )
     moisture_difference = moisture[index_3h, center] - moisture[index_3h, surface]
-    assert round(float(temperature_difference), 4) == 0.1168
-    assert round(float(moisture_difference), 4) == 0.7585
+    assert round(float(temperature_difference), 4) == 0.1170
+    assert round(float(moisture_difference), 4) == 0.7581

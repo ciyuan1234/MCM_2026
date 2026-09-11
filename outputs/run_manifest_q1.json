@@ -1,14 +1,14 @@
 {
   "problem": 1,
-  "timestamp": "2026-09-11T17:45:34.233471+08:00",
-  "command": "analysis/solve.py --problem 1 --no-build-xlsx --output-dir outputs",
+  "timestamp": "2026-09-11T20:52:28.512032+08:00",
+  "command": "analysis/solve.py --problem 1",
   "inputs": {
     "attachment_1": "附件/附件1.xlsx",
     "template": "附件/附件3/result1.xlsx"
   },
   "outputs": {
     "solution_json": "outputs/result1_solution.json",
-    "workbook": null
+    "workbook": "outputs/result1.xlsx"
   },
   "parameters": {
     "problem": 1,
@@ -16,25 +16,26 @@
     "initial_temperature_c": 28.0,
     "initial_moisture_dry_basis": 2.55,
     "radius_m": 0.02,
-    "radial_step_m": 0.001,
+    "radial_step_m": 6.25e-05,
+    "output_radial_step_cm": 0.1,
     "time_step_s": 1.0,
     "end_time_s": 1800.0,
     "picard_tolerance": 1e-08,
     "max_picard_iterations": 30,
     "diagnostics": {
-      "boundary_heat_integral_j_per_m": 19211.524993660085,
-      "internal_energy_change_j_per_m": 19211.524993688992,
-      "heat_balance_relative_error": 1.5046894825187931e-12,
-      "boundary_moisture_integral": -0.0003240196281548634,
-      "internal_moisture_change": -0.00032401962815486736,
-      "moisture_balance_relative_error": 1.2213266066957693e-14,
-      "max_picard_iterations": 3.0
+      "boundary_heat_integral_j_per_m": 19206.562402961605,
+      "internal_energy_change_j_per_m": 19206.562402534764,
+      "heat_balance_relative_error": 2.2223675767791006e-11,
+      "boundary_moisture_integral": -0.00032224343132902187,
+      "internal_moisture_change": -0.0003222434313290242,
+      "moisture_balance_relative_error": 7.233769393622641e-15,
+      "max_picard_iterations": 4.0
     }
   },
   "code_hashes": {
-    "analysis/solve.py": "ac9f05bf2da492ffc477110533a8ec465026b23b7578e7bc3bc27b086712285f",
-    "analysis/build_two_sheet_workbook.mjs": "e94848bb1980b1defb8c6d4bc45addb3cca33ded87ca71689d2e7afcd4199fa3",
-    "src/config.py": "4d50ada8267465efcd8dfa0324097c04383cd28369191db2fd3816e89f576e11",
+    "analysis/solve.py": "98a231eb888347ae6d8de32f609d1d3daac6e5bdd751e5aea003e73f61a7c8ff",
+    "analysis/build_two_sheet_workbook.mjs": "a29214d0c70795855e04ddc432211747ce00efc59c3396624ccc25c0219b1552",
+    "src/config.py": "b27f399e7fddac03e0f9dc2ed2300eda70ef56645e6f750706d0817266bfb13f",
     "src/interpolators.py": "a81faeaff7ff2b01f3fd81aa6afe4afa7e088ef0434f68b7c659cdbef509b3cc",
     "src/material.py": "6416329f1e261d18ffd1dfb1d50d2b94dd5c2857e4439d1a9cf72b41ef711941",
     "src/radial_solver.py": "25cf461252bcb57990cde4fa9721032af2e6fa806e3e105049748e578cd916c0",
