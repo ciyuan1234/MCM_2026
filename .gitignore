@@ -7,6 +7,7 @@ __pycache__/
 .venv/
 venv/
 node_modules
+.ssh/
 
 # External Agentero workspace artifacts, not part of the MCM project.
 .agentero/
