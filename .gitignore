@@ -13,3 +13,6 @@ node_modules
 .agentero/
 .agents/
 notes/
+
+# 本地 Agent 运行时状态目录，不属于项目交付物。
+.agy-acp/
