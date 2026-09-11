@@ -1,10 +1,11 @@
 # EXP-Q1-001：问题 1 独立数值复算
 
-- 状态：已批准启动
+- 状态：已完成，证据已采纳；实验分支已清理（结论留档见同目录 `report.md`）
 - 日期：2026-09-11
 - 基线提交：`9439b71`
-- 分支：`exp/q1-explicit-fdm-001`
-- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q1-explicit-fdm-001`
+- 分支：`exp/q1-explicit-fdm-001`（已于 2026-09-11 删除）
+- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q1-explicit-fdm-001`（已移除）
+- 备份：`/tmp/mcm-backup-exp-q1-explicit-fdm-001.bundle`
 
 ## 唯一决策
 

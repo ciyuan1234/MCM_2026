@@ -5,9 +5,9 @@
 
 | 题目 | 要求 | 输入 | 输出 | 当前证据 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| 问题 1 | 建立预热阶段温度与水分浓度模型 | 附件 1、附录 2、初始条件 | 表 1、表 2、`result1.xlsx` | `docs/problem_1_model.md`、`outputs/result1.xlsx` | 已实现，待确认 |
-| 问题 2 | 建立全过程模型，统一采用附录 3 | 附件 1、附录 3、初始条件 | 表 3、表 4、`result2.xlsx` | `docs/problem_2_model.md`、`outputs/result2.xlsx` | 已实现，待确认 |
-| 问题 3 | 确定各处水分浓度低于 0.15 kg/kg 的烘干时间 | 附件 1、附录 3 | 表 5、`result3.xlsx` | 尚未建立 | 待开始 |
+| 问题 1 | 建立预热阶段温度与水分浓度模型 | 附件 1、附录 2、初始条件 | 表 1、表 2、`result1.xlsx` | `docs/problem_1_model.md`、`outputs/result1.xlsx` | 已实现，用户已确认 |
+| 问题 2 | 建立全过程模型，统一采用附录 3 | 附件 1、附录 3、初始条件 | 表 3、表 4、`result2.xlsx` | `docs/problem_2_model.md`、`outputs/result2.xlsx` | 已实现，用户已确认 |
+| 问题 3 | 确定各处水分浓度低于 0.15 kg/kg 的烘干时间 | 附件 1、附录 3 | 表 5、`result3.xlsx` | 模型文档编写中（`docs/problem_3_model.md`） | 进行中 |
 | 问题 4 | 根据附件 2 考虑尺寸变化并确定烘干时长 | 附件 1、附件 2、附录 4 | 表 6、`result4.xlsx` | 尚未建立 | 待开始 |
 | 全局 | 论文按竞赛格式规范排版 | 官方格式规范文件 | 论文 | 文件尚未提供 | 阻塞 |
 
