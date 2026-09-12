@@ -6,14 +6,25 @@ const [solutionPath, outputPath, templatePath, sheetNamesArg] = process.argv.sli
 if (!solutionPath || !outputPath || !templatePath || !sheetNamesArg) {
   throw new Error(
     "usage: node analysis/build_two_sheet_workbook.mjs "
-      + "<solution.json> <result.xlsx> <template.xlsx> <sheet1,sheet2>",
+      + "<solution.json> <result.xlsx> <template.xlsx> <sheet1[,sheet2]>",
   );
 }
 
 const solution = JSON.parse(await fs.readFile(solutionPath, "utf8"));
 const sheetNames = sheetNamesArg.split(",").map((name) => name.trim());
-if (sheetNames.length !== 2) {
-  throw new Error("exactly two sheet names are required");
+if (sheetNames.length < 1 || sheetNames.length > 2) {
+  throw new Error("one or two sheet names are required");
+}
+const matricesByName = {
+  "温度": solution.temperature_c,
+  "水分浓度": solution.moisture_dry_basis,
+  // 问题 3 的结果模板只有一张名为 Sheet1 的工作表，内容为水分浓度。
+  "Sheet1": solution.moisture_dry_basis,
+};
+for (const sheetName of sheetNames) {
+  if (!matricesByName[sheetName]) {
+    throw new Error(`unsupported sheet name: ${sheetName}`);
+  }
 }
 const workbook = await SpreadsheetFile.importXlsx(
   await FileBlob.load(templatePath),
@@ -71,10 +82,8 @@ function sampleMatrix(matrix) {
   return matrix.map((row) => outputIndices.map((index) => row[index]));
 }
 
-for (const [sheetName, matrix] of [
-  [sheetNames[0], solution.temperature_c],
-  [sheetNames[1], solution.moisture_dry_basis],
-]) {
+for (const sheetName of sheetNames) {
+  const matrix = matricesByName[sheetName];
   const sampledMatrix = sampleMatrix(matrix);
   const sheet = workbook.worksheets.getItem(sheetName);
   sheet.getRange(`A1:${lastColumn}1`).values = header;

@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-09-12T09:57:48.138849+08:00",
+  "command": "analysis/q3_convergence.py",
+  "python": "3.9.6",
+  "compare_horizon_s": 216000.0,
+  "target_moisture_dry_basis": 0.15,
+  "runs": [
+    {
+      "label": "dr=0.125mm,dt=15s",
+      "radial_step_m": 0.000125,
+      "time_step_s": 15.0,
+      "t_f_hours": 60.22891693781151,
+      "center_moisture_at_24h": 0.23741153743045226,
+      "moisture_balance_relative_error": 4.1687946202847707e-14,
+      "linear_system_residual_max": 7.33848705851533e-14,
+      "max_picard_iterations": 6.0
+    },
+    {
+      "label": "dr=0.0625mm,dt=15s",
+      "radial_step_m": 6.25e-05,
+      "time_step_s": 15.0,
+      "t_f_hours": 57.57790042469551,
+      "center_moisture_at_24h": 0.23721656238142977,
+      "moisture_balance_relative_error": 5.1907446467037553e-14,
+      "linear_system_residual_max": 1.5713270110911736e-13,
+      "max_picard_iterations": 7.0
+    },
+    {
+      "label": "dr=0.03125mm,dt=15s",
+      "radial_step_m": 3.125e-05,
+      "time_step_s": 15.0,
+      "t_f_hours": 57.25055841939714,
+      "center_moisture_at_24h": 0.23717613623807868,
+      "moisture_balance_relative_error": 1.7912510857878405e-14,
+      "linear_system_residual_max": 3.9297151839282964e-13,
+      "max_picard_iterations": 7.0
+    },
+    {
+      "label": "dr=0.015625mm,dt=15s",
+      "radial_step_m": 1.5625e-05,
+      "time_step_s": 15.0,
+      "t_f_hours": 57.196702668666546,
+      "center_moisture_at_24h": 0.23716667652014295,
+      "moisture_balance_relative_error": 1.2310556550582723e-13,
+      "linear_system_residual_max": 8.211582942747746e-13,
+      "max_picard_iterations": 6.0
+    },
+    {
+      "label": "dr=0.03125mm,dt=30s",
+      "radial_step_m": 3.125e-05,
+      "time_step_s": 30.0,
+      "t_f_hours": 57.26362906834331,
+      "center_moisture_at_24h": 0.2372402924566621,
+      "moisture_balance_relative_error": 4.6913900046377565e-15,
+      "linear_system_residual_max": 3.673354302083702e-13,
+      "max_picard_iterations": 8.0
+    }
+  ],
+  "comparisons": {
+    "production_label": "dr=0.03125mm,dt=15s",
+    "spatial_reference_label": "dr=0.015625mm,dt=15s",
+    "time_step_label": "dr=0.03125mm,dt=30s",
+    "spatial_t_f_difference_hours": 0.05385575073059101,
+    "time_step_t_f_difference_hours": 0.013070648946175822,
+    "spatial_max_moisture_difference": 0.00037544690276730686,
+    "time_step_max_moisture_difference": 0.00040375493584332567,
+    "compare_times_hours": [
+      6.0,
+      12.0,
+      18.0,
+      24.0,
+      30.0,
+      36.0,
+      42.0,
+      48.0,
+      54.0,
+      60.0
+    ]
+  }
+}

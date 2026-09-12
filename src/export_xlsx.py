@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Sequence
 
 import numpy as np
 from openpyxl import load_workbook
@@ -42,6 +43,24 @@ def verify_result1_workbook(
     )
 
 
+def verify_single_sheet_workbook(
+    path: Path,
+    sheet_name: str,
+    expected_time_s: np.ndarray,
+    expected_radius_m: np.ndarray,
+    expected_values: np.ndarray,
+    tolerance: float = 5e-5,
+) -> None:
+    verify_workbook(
+        path,
+        (sheet_name,),
+        expected_time_s,
+        expected_radius_m,
+        (expected_values,),
+        tolerance,
+    )
+
+
 def verify_two_sheet_workbook(
     path: Path,
     sheet_names: tuple[str, str],
@@ -50,10 +69,32 @@ def verify_two_sheet_workbook(
     expected_matrices: tuple[np.ndarray, np.ndarray],
     tolerance: float = 5e-5,
 ) -> None:
+    verify_workbook(
+        path,
+        sheet_names,
+        expected_time_s,
+        expected_radius_m,
+        expected_matrices,
+        tolerance,
+    )
+
+
+def verify_workbook(
+    path: Path,
+    sheet_names: Sequence[str],
+    expected_time_s: np.ndarray,
+    expected_radius_m: np.ndarray,
+    expected_matrices: Sequence[np.ndarray],
+    tolerance: float = 5e-5,
+) -> None:
+    """Read back a result workbook that holds one or more sheets."""
     workbook = load_workbook(path, read_only=True, data_only=True)
     try:
-        if sheet_names[0] not in workbook.sheetnames or sheet_names[1] not in workbook.sheetnames:
-            raise AssertionError(f"{path.name}: expected sheets {sheet_names}")
+        missing = [name for name in sheet_names if name not in workbook.sheetnames]
+        if missing:
+            raise AssertionError(
+                f"{path.name}: missing sheets {missing}; found {workbook.sheetnames}"
+            )
         for sheet_name, expected_values in zip(sheet_names, expected_matrices):
             _verify_sheet(
                 workbook[sheet_name],
