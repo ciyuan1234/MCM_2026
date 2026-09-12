@@ -1,10 +1,11 @@
 # EXP-003：问题 4 半径处理与移动边界写法敏感性
 
-- 状态：已完成（结论：平滑半径 `+0.0132 h` 通过；忽略收缩过程低估 `3.2820 h`，超阈值须报告区间；分支保留待用户决定合入或清理）
+- 状态：已完成并清理（结论：平滑半径 `+0.0132 h` 通过；忽略收缩过程低估 `3.2820 h`，超阈值须报告区间）
 - 日期：2026-09-12
 - 基线提交：`8521fa5`
-- 分支：`exp/q4-radius-handling-003`（提交 `5ce43a5`，worktree 仍保留）
-- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q4-radius-handling-003`
+- 分支：`exp/q4-radius-handling-003`（已于 2026-09-12 删除，提交 `5ce43a5`）
+- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q4-radius-handling-003`（已移除）
+- 备份：`/tmp/mcm-backup-exp-q4-radius-handling-003.bundle`
 - 结论留档：`docs/problem_4_decision_log.md` 与 `report.md`
 
 ## 唯一决策
