@@ -3,7 +3,7 @@
 - 版本日期：2026-09-12
 - 生成方式：`python analysis/delivery_check.py`（只读检查，不重算、不修改任何产物）
 - 自动化：`tests/test_delivery_checklist.py` 把同一套检查纳入测试套件
-- 最近一次结果：**70 项全部 PASS，0 项 FAIL**
+- 最近一次结果：**72 项全部 PASS，0 项 FAIL**
 
 ## 1. 检查范围与结果
 
@@ -20,8 +20,8 @@
 | 总览数字 | `docs/overview.md` 含全部头条数字 | 1 | PASS |
 | 图件 | 22 张图 × {PNG, PDF, SVG} = 66 个文件存在且非空 | 1 | PASS |
 | 文档齐全 | 全局与四问共 27 份文档、6 份实验任务卡 | 2 | 全部 PASS |
-| 论文正文 | `docs/paper_draft.md` 存在、结构完整（12 节）、含全部头条数字 | 3 | 全部 PASS |
-| **合计** | | **70** | **PASS 70 / FAIL 0** |
+| 论文正文 | `docs/paper_draft.md` 存在、结构完整（10 节 + 附录）、含全部头条数字、正文与附录交叉引用无悬空 | 5 | 全部 PASS |
+| **合计** | | **72** | **PASS 72 / FAIL 0** |
 
 ## 2. 模板与产物对照
 
@@ -45,7 +45,7 @@
 
 ## 4. 测试状态
 
-- `pytest -q`：**62 项全部通过**（其中自检测试覆盖上述 70 项检查）。
+- `pytest -q`：**62 项全部通过**（其中自检测试覆盖上述 72 项检查）。
 - 长时程收敛复算（`analysis/q3_convergence.py`、`analysis/q4_convergence.py`）耗时约 1 小时，不进入默认套件，其产物已固化在 `outputs/q*_convergence.json` 并由测试断言。
 
 ## 5. 已知限制与未决项（不随本清单关闭）

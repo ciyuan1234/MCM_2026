@@ -449,15 +449,15 @@ def _check_paper_draft(results: list[dict]) -> None:
     )
     required_sections = (
         "摘要",
-        "问题重述",
-        "模型假设与符号",
-        "统一模型框架与数值方法",
-        "问题一",
-        "问题二",
-        "问题三",
-        "问题四",
-        "模型检验汇总",
-        "取舍与边界",
+        "问题重述与总体分析",
+        "模型建立",
+        "数值方法与可靠性",
+        "问题一：",
+        "问题二：",
+        "问题三：",
+        "问题四：",
+        "敏感性分析与偏差汇总",
+        "建模取舍与结论边界",
         "结论",
         "附录",
     )
@@ -466,7 +466,27 @@ def _check_paper_draft(results: list[dict]) -> None:
         results,
         "正文结构完整",
         not absent,
-        "12 节齐全" if not absent else f"缺少 {absent}",
+        "10 节 + 附录齐全" if not absent else f"缺少 {absent}",
+    )
+    section_ids = set(
+        re.findall(r"^#{2,3}\s*(\d+(?:\.\d+)?)[\.\s]", text, flags=re.MULTILINE)
+    )
+    references = set(re.findall(r"第\s*(\d+(?:\.\d+)?)\s*节", text))
+    dangling = sorted(ref for ref in references if ref not in section_ids)
+    _record(
+        results,
+        "正文交叉引用无悬空",
+        not dangling,
+        "全部引用有效" if not dangling else f"悬空引用 {dangling}",
+    )
+    appendix_ids = set(re.findall(r"^##\s*附录\s*([A-Z])", text, flags=re.MULTILINE))
+    appendix_refs = set(re.findall(r"附录\s*([A-Z])", text))
+    dangling_appendix = sorted(ref for ref in appendix_refs if ref not in appendix_ids)
+    _record(
+        results,
+        "附录引用无悬空",
+        not dangling_appendix,
+        "全部引用有效" if not dangling_appendix else f"悬空引用 {dangling_appendix}",
     )
 
 
