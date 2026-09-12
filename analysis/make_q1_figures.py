@@ -102,6 +102,7 @@ def _plot_profiles(
     title: str,
     time_label: str = "时间 (s)",
     time_format: str = "{:.0f} s",
+    annotation_dx: int = 6,
 ) -> ScalarMappable:
     norm = Normalize(vmin=min(times_s), vmax=max(times_s))
     cmap = plt.get_cmap("viridis")
@@ -120,7 +121,7 @@ def _plot_profiles(
         axis.annotate(
             time_format.format(target_time_s),
             xy=(radius_cm[-1], values[index, -1]),
-            xytext=(6, offset_y),
+            xytext=(annotation_dx, offset_y),
             textcoords="offset points",
             color=cmap(norm(target_time_s)),
             fontsize=8,
@@ -249,6 +250,7 @@ def generate_figures(
     long_horizon = problem == 3
     time_unit = "h" if long_horizon else "s"
     time_format = "{:.1f} h" if long_horizon else "{:.0f} s"
+    annotation_dx = -40 if long_horizon else 6
 
     with solution_path.open(encoding="utf-8") as file:
         solution = json.load(file)
@@ -279,6 +281,7 @@ def generate_figures(
         f"{stage_label}药材径向温度分布",
         time_label=f"时间 ({time_unit})",
         time_format=time_format,
+        annotation_dx=annotation_dx,
     )
     colorbar = fig.colorbar(scalar_map, ax=axis, pad=0.02)
     colorbar.set_label(f"时间 ({time_unit})")
@@ -298,6 +301,7 @@ def generate_figures(
         f"{stage_label}药材径向水分浓度分布",
         time_label=f"时间 ({time_unit})",
         time_format=time_format,
+        annotation_dx=annotation_dx,
     )
     colorbar = fig.colorbar(scalar_map, ax=axis, pad=0.02)
     colorbar.set_label(f"时间 ({time_unit})")
@@ -349,6 +353,7 @@ def generate_figures(
         "径向温度分布",
         time_label=f"时间 ({time_unit})",
         time_format=time_format,
+        annotation_dx=annotation_dx,
     )
     fig.colorbar(scalar_map, ax=axes[0, 0], fraction=0.046, pad=0.02).set_label(
         f"时间 ({time_unit})"
@@ -363,6 +368,7 @@ def generate_figures(
         "径向水分浓度分布",
         time_label=f"时间 ({time_unit})",
         time_format=time_format,
+        annotation_dx=annotation_dx,
     )
     fig.colorbar(scalar_map, ax=axes[0, 1], fraction=0.046, pad=0.02).set_label(
         f"时间 ({time_unit})"
