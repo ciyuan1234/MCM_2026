@@ -28,5 +28,18 @@
 | 问题 2 模板回读 | `result2.xlsx` 与内存结果一致 | `tests/test_result2.py` | 通过 |
 | 问题 2 结论追溯 | 结论关键值来自结果文件 | `tests/test_q2_conclusion.py` | 通过 |
 | 问题 2 物性范围 | 量化附录 3 必要性 | `analysis/q2_metrics.py`、`tests/test_q2_metrics.py` | 通过 |
-| 问题 3 验证 | 圆心达标时间 | 尚未建立 | 待开始 |
+| 问题 3 初值 | `t=0` 时 `T=28 °C`、`C=2.55 kg/kg` | `tests/test_solver.py::test_initial_condition_is_preserved`、`tests/test_q3_solver.py` | 通过 |
+| 问题 3 零驱动 | 空气状态等于药材初始状态时不变化 | `tests/test_q3_solver.py::test_q3_zero_drive_keeps_initial_state` | 通过 |
+| 问题 3 圆心判据 | 圆心是空间最大含水率位置且单调下降 | `tests/test_q3_solver.py::test_q3_center_is_last_position_to_dry`、`tests/test_result3.py` | 通过 |
+| 问题 3 表面/圆心先达标 | 表面先接近空气含水率，圆心最后达标 | `tests/test_q3_solver.py::test_q3_surface_reaches_air_moisture_before_center_reaches_target` | 通过 |
+| 问题 3 水分守恒 | 内部变化与边界通量一致 | `outputs/run_manifest_q3.json`：`5.24e-14` | 通过 |
+| 问题 3 离散残差 | 离散热方程线性系统闭合 | `outputs/run_manifest_q3.json`：`1.57e-13` | 通过 |
+| 问题 3 时间收敛 | `dt=15 s` 对 `dt=30 s` | `outputs/q3_convergence.json`：`Δt_f = 0.0131 h`（阈值 0.0167 h） | 通过 |
+| 问题 3 预热段时间步精度 | 对 `dt=5 s` 参考 `0.5 h` 表面含水率偏差 | `dt=30 s`：`2.28e-3`（不达标）；`dt=15 s`：`9.1e-4`（阈值 `1e-3`） | 通过（15 s） |
+| 问题 3 空间收敛（`t_f`） | 生产网格 `0.03125 mm` 对 `0.015625 mm` | `Δt_f = 0.0539 h`（阈值 0.5 h） | 通过 |
+| 问题 3 空间收敛（含水率场） | 生产网格对 `0.015625 mm` 的 6 h 采样场 | `3.754e-4 kg/kg`（阈值 `1e-3`） | 通过 |
+| 问题 3 网格细化前的问题记录 | `0.0625 mm` 对 `0.03125 mm` 的近表面带 | `2.252e-3 kg/kg` 超阈值，据此细化网格（GAP-029） | 已关闭 |
+| 问题 3 短窗口中网格收敛 | `0.125` 对 `0.0625 mm`，2 h 窗口 | `tests/test_q3_solver.py::test_q3_grid_convergence_over_short_window` | 通过 |
+| 问题 3 模板回读 | `result3.xlsx` 单表 `Sheet1` 与内存结果一致 | `tests/test_result3.py` | 通过 |
+| 问题 3 结论追溯 | 结论关键值来自结果文件 | `tests/test_q3_conclusion.py` | 通过 |
 | 问题 4 验证 | 移动边界和半径处理 | 尚未建立 | 待开始 |

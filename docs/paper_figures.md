@@ -23,3 +23,9 @@
 | C-02 | 常数物性对附录 3 变物性 | 正文 | 问题 2 基准完成 | 待开始 |
 | C-03 | 长期边界保持与扰动 | 正文 | EXP-002 | 待开始 |
 | C-04 | 是否考虑收缩、半径插值方式 | 正文 | EXP-003 | 待开始 |
+| 图 1 | `fig1_q3_temperature_profiles` | 问题3 长期阶段径向温度分布 | `result3_solution.json` | 已生成 |
+| 图 2 | `fig2_q3_moisture_profiles` | 问题3 径向含水率分布（含达标时刻） | `result3_solution.json` | 已生成 |
+| 图 3 | `fig3_q3_center_surface_temperature` | 圆心与表面温度长期变化 | `result3_solution.json` | 已生成 |
+| 图 4 | `fig4_q3_center_surface_moisture` | 圆心与表面含水率及 0.15 达标线 | `result3_solution.json` | 已生成 |
+| 图 5 | `fig5_q3_summary_2x2` | 问题3 结果汇总 | `result3_solution.json` | 已生成 |
+| 图 6 | `fig6_q3_convergence` | `t_f` 的网格与时间步收敛趋势 | `q3_convergence.json` | 已生成 |
