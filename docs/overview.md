@@ -104,10 +104,10 @@
 
 | 文件 | 内容 | 说明 |
 | --- | --- | --- |
-| `outputs/result1.xlsx` | 温度、水分浓度（1802 行 × 22 列） | 问题 1 交付 |
-| `outputs/result2.xlsx` | 同上（10802 行 × 22 列） | 问题 2 交付 |
-| `outputs/result3.xlsx` | `Sheet1` 水分浓度（3457 行 × 22 列） | 问题 3 交付 |
-| `outputs/result4.xlsx` | `Sheet1` 水分浓度（3052 行 × 22 列，末列 `药材表面`） | 问题 4 交付 |
+| `outputs/result1.xlsx` | 温度、水分浓度（每表 1802 行含表头 × 22 列） | 问题 1 交付 |
+| `outputs/result2.xlsx` | 同上（每表 10802 行含表头 × 22 列） | 问题 2 交付 |
+| `outputs/result3.xlsx` | `Sheet1` 水分浓度（3438 行含表头 × 22 列） | 问题 3 交付 |
+| `outputs/result4.xlsx` | `Sheet1` 水分浓度（3053 行含表头 × 22 列，末列 `药材表面`） | 问题 4 交付 |
 | `outputs/run_manifest_q{1..4}.json`、`outputs/run_manifest.json` | 参数、网格、时间步、代码哈希、环境 | 复现记录 |
 | `outputs/result{1..4}_solution.json` | 完整数值结果（含细网格） | **仅本地保留**（G-029，单文件最大 169 MB 超出远程上限） |
 | `outputs/q3_convergence.json`、`outputs/q4_convergence.json` | 收敛证据 | 论文验证章节引用 |
