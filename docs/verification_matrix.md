@@ -59,3 +59,5 @@
 | 跨问参数一致性 | 表面系数与阈值四问同源 | `h=25`、`hm=8e-7`、`C ≤ 0.15` 在四份模型文档中一致 | 通过 |
 | 跨问结果一致性 | 文档头条数字与结果文件一致 | `docs/overview.md` 第 5 节对照表；问题 1、2 结果在问题 3、4 实现后零变化（常数半径回归） | 通过 |
 | 交付自检 | 模板、格式、语义、附件只读、manifest、图件、文档齐全 | `analysis/delivery_check.py`、`docs/delivery_checklist.md`、`tests/test_delivery_checklist.py` | 通过（67 项 PASS / 0 FAIL） |
+| 问题 4 效应分解（EXP-004） | 反事实点 B：附录 4 物性 + 固定半径 2 cm | `exp/q4-property-geometry-004` 报告：B = `129.1442 h`，生成守恒误差 `6.01e-14`；物性效应 `+71.8775 h`、几何效应 `−78.2942 h` | 已完成 |
+| 问题 4 分解产物 | `outputs/q4_decomposition.json` 与论文数字一致 | 自检项"效应分解与产物一致" | 通过 |

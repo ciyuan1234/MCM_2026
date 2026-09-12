@@ -583,6 +583,36 @@ def _check_figure_font_coverage(results: list[dict]) -> None:
     )
 
 
+def _check_vector_text_embedding(results: list[dict]) -> None:
+    """矢量输出必须自带字形：SVG 转轮廓、PDF 内嵌字体，避免查看器替换字体。"""
+    svg_with_text = []
+    pdf_without_font = []
+    for stem in FIGURES:
+        svg_path = OUTPUTS / "figures" / f"{stem}.svg"
+        if svg_path.exists():
+            content = svg_path.read_text(encoding="utf-8", errors="ignore")
+            texts = re.findall(r"<text[^>]*>(.*?)</text>", content, flags=re.S)
+            if any(
+                any(0x3000 <= ord(char) <= 0x9FFF for char in text) for text in texts
+            ):
+                svg_with_text.append(stem)
+        pdf_path = OUTPUTS / "figures" / f"{stem}.pdf"
+        if pdf_path.exists() and b"FontFile2" not in pdf_path.read_bytes():
+            pdf_without_font.append(stem)
+    _record(
+        results,
+        "SVG 文字已转为矢量轮廓",
+        not svg_with_text,
+        "全部无文本元素" if not svg_with_text else f"仍含文本元素 {svg_with_text}",
+    )
+    _record(
+        results,
+        "PDF 已内嵌字体",
+        not pdf_without_font,
+        "全部内嵌 TrueType" if not pdf_without_font else f"未内嵌 {pdf_without_font}",
+    )
+
+
 def _check_derived_claims(results: list[dict]) -> None:
     """文档中的派生量必须能由结果文件复算得到（防止未经验证的陈述）。"""
     with (OUTPUTS / "result3_solution.json").open(encoding="utf-8") as file:
@@ -611,6 +641,47 @@ def _check_derived_claims(results: list[dict]) -> None:
         "论文采用复算后的交叉时刻",
         "40.96 h" in text and "15 h" not in text,
         "正文含 40.96 h 且无过期表述" if ("40.96 h" in text and "15 h" not in text) else "正文与复算不一致",
+    )
+
+
+def _check_effect_decomposition(results: list[dict]) -> None:
+    """问题四的效应分解必须与 outputs/q4_decomposition.json 一致。"""
+    path = OUTPUTS / "q4_decomposition.json"
+    if not path.exists():
+        _record(results, "效应分解产物存在", False, "缺少 outputs/q4_decomposition.json")
+        return
+    with path.open(encoding="utf-8") as file:
+        payload = json.load(file)
+    cases = payload["cases"]
+    effects = payload["effects"]
+    a = float(cases["A_appendix3_fixed_radius"]["t_f_hours"])
+    b = float(cases["B_appendix4_fixed_radius"]["t_f_hours"])
+    c = float(cases["C_appendix4_shrinking"]["t_f_hours"])
+    d = float(cases["D_appendix4_final_radius"]["t_f_hours"])
+    checks = {
+        "A = 57.2667 h": abs(a - 57.2667) < 5e-4,
+        "B = 129.1442 h": abs(b - 129.1442) < 5e-3,
+        "C = 50.8500 h": abs(c - 50.85) < 5e-4,
+        "D = 47.5598 h": abs(d - 47.5598) < 5e-4,
+        "物性效应 +71.8775 h": abs(effects["property_effect_hours"] - 71.8775) < 5e-3,
+        "几何效应 −78.2942 h": abs(effects["geometry_effect_hours"] + 78.2942) < 5e-3,
+        "净效应 −6.4167 h": abs(effects["total_effect_hours"] + 6.4167) < 5e-4,
+    }
+    failed = [name for name, ok in checks.items() if not ok]
+    _record(
+        results,
+        "效应分解四对照点与两段效应自洽",
+        not failed,
+        "全部通过" if not failed else f"不一致：{failed}",
+    )
+    text = (PROJECT_ROOT / "docs" / "paper_draft.md").read_text(encoding="utf-8")
+    tokens = ("129.1442", "71.8775", "78.2942", "47.5598", "3.2901")
+    missing = [token for token in tokens if token not in text]
+    _record(
+        results,
+        "论文引用分解数字",
+        not missing,
+        "全部命中" if not missing else f"缺少 {missing}",
     )
     section_ids = set(
         re.findall(r"^#{2,3}\s*(\d+(?:\.\d+)?)[\.\s]", text, flags=re.MULTILINE)
@@ -649,7 +720,9 @@ def run_checks() -> list[dict]:
     _check_paper_draft(results)
     _check_grayscale_figures(results)
     _check_figure_font_coverage(results)
+    _check_vector_text_embedding(results)
     _check_derived_claims(results)
+    _check_effect_decomposition(results)
     return results
 
 

@@ -46,7 +46,7 @@
 | 图 4-3 | `fig3_q4_center_surface_moisture` | 收缩条件下圆心与表面含水率及达标线 | 同上 | 正文 | 已生成 |
 | 图 4-4 | `fig4_q4_center_surface_temperature` | 收缩条件下圆心与表面温度变化 | 同上 | 附录 D | 已生成 |
 | 图 4-5 | `fig5_q4_summary_2x2` | 问题 4 结果汇总 | 同上 | 附录 D | 已生成 |
-| 图 4-6 | `fig6_q4_q3_comparison` | 固定半径与收缩条件的干燥进程对比（40.96 h 交叉） | `result3_solution.json`、`result4_solution.json` | 正文 | 已生成 |
+| 图 4-6 | `fig6_q4_q3_comparison` | 物性与几何对烘干进程的贡献分解（A/B/C 三曲线 + D 参考线） | `q4_decomposition.json` | 正文 | 已生成 |
 
 ## 对比图与验证图计划
 

@@ -103,6 +103,9 @@ def _configure_style() -> None:
             "mathtext.rm": "Hiragino Sans GB",
             "mathtext.it": "Hiragino Sans GB:italic",
             "mathtext.bf": "Hiragino Sans GB:bold",
+            # 矢量输出内嵌字形：SVG 转轮廓、PDF 内嵌 TrueType，避免查看器替换字体。
+            "svg.fonttype": "path",
+            "pdf.fonttype": 42,
             "axes.unicode_minus": False,
             "font.size": 10,
             "axes.titlesize": 12,
@@ -661,32 +664,61 @@ def _generate_problem_4_figures(
     paths.extend(_save_figure(fig, figure_dir, "fig5_q4_summary_2x2"))
     plt.close(fig)
 
-    q3_path = DEFAULT_SOLUTION_PATHS[3]
-    if q3_path.exists():
-        with q3_path.open(encoding="utf-8") as file:
-            q3_solution = json.load(file)
-        q3_time_h = np.array(q3_solution["time_s"], dtype=float) / 3600.0
-        q3_moisture = np.array(q3_solution["moisture_dry_basis"], dtype=float)
+    decomposition_path = DEFAULT_CONVERGENCE_PATH.parent / "q4_decomposition.json"
+    if decomposition_path.exists():
+        with decomposition_path.open(encoding="utf-8") as file:
+            decomposition = json.load(file)
+        cases = decomposition["cases"]
+        effects = decomposition["effects"]
         fig, axis = plt.subplots(figsize=(6.6, 4.4))
-        axis.plot(
-            q3_time_h,
-            q3_moisture[:, 0],
-            color=CENTER_COLOR,
-            linewidth=1.8,
-            label="问题3 固定半径（圆心）",
+        styles = (
+            ("A_appendix3_fixed_radius", "问题3：附录 3 + 固定半径", CENTER_COLOR, "-", "o"),
+            ("B_appendix4_fixed_radius", "附录 4 + 固定半径（反事实）", "#7F7F7F", "--", "s"),
+            ("C_appendix4_shrinking", "问题4：附录 4 + 实际收缩", "#404040", "-.", "^"),
         )
-        axis.plot(
-            time_h,
-            moisture[:, 0],
-            color=SURFACE_COLOR,
-            linewidth=1.8,
-            linestyle="--",
-            label="问题4 收缩（圆心）",
+        for key, label, color, linestyle, marker in styles:
+            case = cases[key]
+            case_time_h = np.array(case["time_s"], dtype=float) / 3600.0
+            case_center = np.array(case["center_moisture"], dtype=float)
+            axis.plot(
+                case_time_h,
+                case_center,
+                color=color,
+                linewidth=1.8,
+                linestyle=linestyle,
+                marker=marker,
+                markersize=3.0,
+                markevery=0.12,
+                label=label,
+            )
+        axis.axhline(
+            0.15, color="black", linewidth=1.0, linestyle=":", label="达标线 0.15 kg/kg"
         )
-        axis.axhline(0.15, color="#555555", linewidth=1.0, linestyle=":", label="达标线 0.15 kg/kg")
+        final_radius_hours = float(cases["D_appendix4_final_radius"]["t_f_hours"])
+        axis.axvline(
+            final_radius_hours,
+            color="#9E9E9E",
+            linewidth=1.0,
+            linestyle=(0, (1, 2)),
+            label=f"附录 4 + 全程 1.198 cm（{final_radius_hours:.1f} h）",
+        )
+        axis.annotate(
+            f"物性效应 {effects['property_effect_hours']:+.1f} h",
+            xy=(0.02, 0.72),
+            xycoords="axes fraction",
+            fontsize=8.5,
+            color="black",
+        )
+        axis.annotate(
+            f"收缩效应 {effects['geometry_effect_hours']:+.1f} h",
+            xy=(0.02, 0.62),
+            xycoords="axes fraction",
+            fontsize=8.5,
+            color="black",
+        )
         axis.set_xlabel("时间 (h)")
         axis.set_ylabel("圆心水分浓度 (kg/kg，干基)")
-        axis.set_title("固定半径与收缩条件的干燥进程对比")
+        axis.set_title("物性与几何对烘干进程的贡献分解")
         axis.legend(loc="best")
         _style_axis(axis)
         fig.tight_layout(rect=[0, 0.04, 1, 1])
