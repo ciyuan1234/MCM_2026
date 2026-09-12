@@ -2,49 +2,51 @@
 
 - 版本日期：2026-09-12
 - 编号规则：图 `<问题号>-<序号>`（例如 图 3-6 表示问题 3 的第 6 张图），增删某一问的图不影响其他问；论文表格沿用题目规定的表 1～6。
+- 位置规则：正文只保留承担论证任务的 9 张图（下表中标注"正文"），其余 13 张移入附录 D（标注"附录"）；图号不随位置变化。
+- 样式规则：全部图件为黑白灰阶，靠灰阶 + 线型 + 标记 + 端点标注区分，见 `docs/visualization_spec.md`。
 - 每张图同时输出 `.png`、`.pdf`、`.svg`，统一放在 `outputs/figures/`；全部标注坐标、单位、图例、时间基准、数据来源与模型来源。
 
 ## 问题 1（预热阶段，常数物性）
 
-| 图号 | 文件前缀 | 中文图注 | 数据来源 | 状态 |
-| --- | --- | --- | --- | --- |
-| 图 1-1 | `fig1_q1_temperature_profiles` | 预热阶段药材径向温度分布 | `result1_solution.json` | 已生成 |
-| 图 1-2 | `fig2_q1_moisture_profiles` | 预热阶段药材径向水分浓度分布 | 同上 | 已生成 |
-| 图 1-3 | `fig3_q1_center_surface_temperature` | 圆心与表面温度随时间变化 | 同上 | 已生成 |
-| 图 1-4 | `fig4_q1_center_surface_moisture` | 圆心与表面水分浓度随时间变化 | 同上 | 已生成 |
-| 图 1-5 | `fig5_q1_summary_2x2` | 问题 1 温度与水分浓度演化汇总 | 同上 | 已生成 |
+| 图号 | 文件前缀 | 中文图注 | 数据来源 | 位置 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| 图 1-1 | `fig1_q1_temperature_profiles` | 预热阶段药材径向温度分布 | `result1_solution.json` | 附录 D | 已生成 |
+| 图 1-2 | `fig2_q1_moisture_profiles` | 预热阶段药材径向水分浓度分布 | 同上 | 附录 D | 已生成 |
+| 图 1-3 | `fig3_q1_center_surface_temperature` | 圆心与表面温度随时间变化 | 同上 | 正文 | 已生成 |
+| 图 1-4 | `fig4_q1_center_surface_moisture` | 圆心与表面水分浓度随时间变化 | 同上 | 正文 | 已生成 |
+| 图 1-5 | `fig5_q1_summary_2x2` | 问题 1 温度与水分浓度演化汇总 | 同上 | 附录 D | 已生成 |
 
 ## 问题 2（恒温阶段 3 h，附录 3 变物性）
 
-| 图号 | 文件前缀 | 中文图注 | 数据来源 | 状态 |
-| --- | --- | --- | --- | --- |
-| 图 2-1 | `fig1_q2_temperature_profiles` | 问题 2 径向温度分布 | `result2_solution.json` | 已生成 |
-| 图 2-2 | `fig2_q2_moisture_profiles` | 问题 2 径向水分浓度分布 | 同上 | 已生成 |
-| 图 2-3 | `fig3_q2_center_surface_temperature` | 问题 2 圆心与表面温度 | 同上 | 已生成 |
-| 图 2-4 | `fig4_q2_center_surface_moisture` | 问题 2 圆心与表面水分浓度 | 同上 | 已生成 |
-| 图 2-5 | `fig5_q2_summary_2x2` | 问题 2 演化汇总 | 同上 | 已生成 |
+| 图号 | 文件前缀 | 中文图注 | 数据来源 | 位置 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| 图 2-1 | `fig1_q2_temperature_profiles` | 问题 2 径向温度分布 | `result2_solution.json` | 附录 D | 已生成 |
+| 图 2-2 | `fig2_q2_moisture_profiles` | 问题 2 径向水分浓度分布 | 同上 | 附录 D | 已生成 |
+| 图 2-3 | `fig3_q2_center_surface_temperature` | 问题 2 圆心与表面温度 | 同上 | 正文 | 已生成 |
+| 图 2-4 | `fig4_q2_center_surface_moisture` | 问题 2 圆心与表面水分浓度 | 同上 | 正文 | 已生成 |
+| 图 2-5 | `fig5_q2_summary_2x2` | 问题 2 演化汇总 | 同上 | 附录 D | 已生成 |
 
 ## 问题 3（全周期，固定半径）
 
-| 图号 | 文件前缀 | 中文图注 | 数据来源 | 状态 |
-| --- | --- | --- | --- | --- |
-| 图 3-1 | `fig1_q3_temperature_profiles` | 长期烘干阶段径向温度分布 | `result3_solution.json` | 已生成 |
-| 图 3-2 | `fig2_q3_moisture_profiles` | 长期烘干阶段径向含水率分布 | 同上 | 已生成 |
-| 图 3-3 | `fig3_q3_center_surface_temperature` | 圆心与表面温度长期变化 | 同上 | 已生成 |
-| 图 3-4 | `fig4_q3_center_surface_moisture` | 圆心与表面含水率及 0.15 kg/kg 达标线 | 同上 | 已生成 |
-| 图 3-5 | `fig5_q3_summary_2x2` | 问题 3 结果汇总 | 同上 | 已生成 |
-| 图 3-6 | `fig6_q3_convergence` | `t_f` 对网格与时间步的收敛趋势 | `q3_convergence.json` | 已生成 |
+| 图号 | 文件前缀 | 中文图注 | 数据来源 | 位置 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| 图 3-1 | `fig1_q3_temperature_profiles` | 前 6 h 径向温度分布（0.25～6 h） | `result3_solution.json` | 附录 D | 已生成 |
+| 图 3-2 | `fig2_q3_moisture_profiles` | 长期烘干阶段径向含水率分布 | 同上 | 正文 | 已生成 |
+| 图 3-3 | `fig3_q3_center_surface_temperature` | 圆心与表面温度长期变化 | 同上 | 附录 D | 已生成 |
+| 图 3-4 | `fig4_q3_center_surface_moisture` | 圆心与表面含水率及 0.15 kg/kg 达标线 | 同上 | 正文 | 已生成 |
+| 图 3-5 | `fig5_q3_summary_2x2` | 问题 3 结果汇总 | 同上 | 附录 D | 已生成 |
+| 图 3-6 | `fig6_q3_convergence` | `t_f` 对网格与时间步的收敛趋势 | `q3_convergence.json` | 附录 D | 已生成 |
 
 ## 问题 4（全周期，含尺寸收缩）
 
-| 图号 | 文件前缀 | 中文图注 | 数据来源 | 状态 |
-| --- | --- | --- | --- | --- |
-| 图 4-1 | `fig1_q4_radius_history` | 药材半径随烘干时间的收缩过程 | 附件 2、`result4_solution.json` | 已生成 |
-| 图 4-2 | `fig2_q4_moisture_profiles` | 收缩条件下药材内部含水率分布（材料坐标） | `result4_solution.json` | 已生成 |
-| 图 4-3 | `fig3_q4_center_surface_moisture` | 收缩条件下圆心与表面含水率及达标线 | 同上 | 已生成 |
-| 图 4-4 | `fig4_q4_center_surface_temperature` | 收缩条件下圆心与表面温度变化 | 同上 | 已生成 |
-| 图 4-5 | `fig5_q4_summary_2x2` | 问题 4 结果汇总 | 同上 | 已生成 |
-| 图 4-6 | `fig6_q4_q3_comparison` | 固定半径与收缩条件的干燥进程对比 | `result3_solution.json`、`result4_solution.json` | 已生成 |
+| 图号 | 文件前缀 | 中文图注 | 数据来源 | 位置 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| 图 4-1 | `fig1_q4_radius_history` | 药材半径随烘干时间的收缩过程 | 附件 2、`result4_solution.json` | 正文 | 已生成 |
+| 图 4-2 | `fig2_q4_moisture_profiles` | 收缩条件下药材内部含水率分布（材料坐标） | `result4_solution.json` | 附录 D | 已生成 |
+| 图 4-3 | `fig3_q4_center_surface_moisture` | 收缩条件下圆心与表面含水率及达标线 | 同上 | 正文 | 已生成 |
+| 图 4-4 | `fig4_q4_center_surface_temperature` | 收缩条件下圆心与表面温度变化 | 同上 | 附录 D | 已生成 |
+| 图 4-5 | `fig5_q4_summary_2x2` | 问题 4 结果汇总 | 同上 | 附录 D | 已生成 |
+| 图 4-6 | `fig6_q4_q3_comparison` | 固定半径与收缩条件的干燥进程对比（40.96 h 交叉） | `result3_solution.json`、`result4_solution.json` | 正文 | 已生成 |
 
 ## 对比图与验证图计划
 
@@ -57,4 +59,4 @@
 
 ## 统计
 
-共 22 张图 × 3 种格式 = 66 个文件；问题 1、2 各 5 张，问题 3、4 各 6 张（各含一张额外诊断/对比图）。
+共 22 张图 × 3 种格式 = 66 个文件；问题 1、2 各 5 张，问题 3、4 各 6 张。其中**正文 9 张**（图 1-3、1-4、2-3、2-4、3-2、3-4、4-1、4-3、4-6），**附录 D 13 张**（其余各图）。全部为黑白灰阶。

@@ -18,7 +18,7 @@ os.environ.setdefault(
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable
-from matplotlib.colors import Normalize
+from matplotlib.colors import LinearSegmentedColormap, Normalize
 import numpy as np
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -37,13 +37,21 @@ DEFAULT_CONVERGENCE_PATH = PROJECT_ROOT / "outputs" / "q3_convergence.json"
 DEFAULT_SOLUTION_PATH = DEFAULT_SOLUTION_PATHS[1]
 DEFAULT_FIGURE_DIR = PROJECT_ROOT / "outputs" / "figures"
 
-PROFILE_TIMES_BY_PROBLEM = {
+# 温度场在数小时内即趋于均匀，因此温度剖面使用早期时刻；含水率剖面覆盖全时段。
+TEMPERATURE_PROFILE_TIMES = {
     1: [100.0, 300.0, 600.0, 900.0, 1200.0, 1500.0, 1800.0],
     2: [1800.0, 3600.0, 5400.0, 7200.0, 9000.0, 10800.0],
-    # 问题 3 的时间轴按小时绘制，末尾时刻在 generate_figures 中动态追加。
+    3: [0.25, 0.6, 1.0, 2.0, 6.0],
+    4: [0.25, 0.6, 1.0, 2.0, 6.0],
+}
+MOISTURE_PROFILE_TIMES = {
+    1: [100.0, 300.0, 600.0, 900.0, 1200.0, 1500.0, 1800.0],
+    2: [1800.0, 3600.0, 5400.0, 7200.0, 9000.0, 10800.0],
     3: [0.5, 6.0, 24.0, 48.0],
     4: [0.5, 6.0, 12.0, 24.0, 48.0],
 }
+# 兼容旧引用
+PROFILE_TIMES_BY_PROBLEM = MOISTURE_PROFILE_TIMES
 STAGE_LABELS = {
     1: "预热阶段",
     2: "变物性烘干阶段",
@@ -68,8 +76,14 @@ SOURCE_TEXT_BY_PROBLEM = {
         "生成脚本：analysis/make_q1_figures.py"
     ),
 }
-CENTER_COLOR = "#0072B2"
-SURFACE_COLOR = "#D55E00"
+# 黑白（灰度）规范：不使用彩色，靠灰阶 + 线型 + 标记 + 端点标注区分。
+CENTER_COLOR = "#000000"
+SURFACE_COLOR = "#595959"
+FILL_COLOR = "#D9D9D9"
+LINE_STYLES = ("-", "--", "-.", ":", (0, (5, 1, 1, 1)))
+MARKERS = ("o", "s", "^", "D", "v", "P", "X")
+GRAY_CMAP_LOW = 0.30
+GRAY_CMAP_HIGH = 0.95
 SOURCE_TEXT = SOURCE_TEXT_BY_PROBLEM[1]
 
 
@@ -102,11 +116,29 @@ def _style_axis(axis) -> None:
     axis.set_axisbelow(True)
 
 
+def _gray_colormap():
+    """截断的灰阶色带：最浅一条仍能被打印区分。"""
+    base = plt.get_cmap("Greys")
+    return LinearSegmentedColormap.from_list(
+        "mcm_gray",
+        base(np.linspace(GRAY_CMAP_LOW, GRAY_CMAP_HIGH, 256)),
+    )
+
+
 def _time_index(time_s: np.ndarray, target_time_s: float) -> int:
     matches = np.where(np.isclose(time_s, target_time_s))[0]
     if matches.size != 1:
         raise ValueError(f"time {target_time_s} is not unique in the solution")
     return int(matches[0])
+
+
+def _format_seconds(value: float) -> str:
+    return f"{value:.0f} s"
+
+
+def _format_hours(value: float) -> str:
+    text = f"{value:.2f}".rstrip("0").rstrip(".")
+    return f"{text} h"
 
 
 def _plot_profiles(
@@ -118,29 +150,34 @@ def _plot_profiles(
     ylabel: str,
     title: str,
     time_label: str = "时间 (s)",
-    time_format: str = "{:.0f} s",
+    time_formatter=_format_seconds,
     annotation_dx: int = 6,
 ) -> ScalarMappable:
     norm = Normalize(vmin=min(times_s), vmax=max(times_s))
-    cmap = plt.get_cmap("viridis")
-    for target_time_s in times_s:
+    cmap = _gray_colormap()
+    for index_in_series, target_time_s in enumerate(times_s):
         index = _time_index(time_s, target_time_s)
+        gray = cmap(norm(target_time_s))
         axis.plot(
             radius_cm,
             values[index],
-            color=cmap(norm(target_time_s)),
+            color=gray,
             linewidth=1.6,
-            label=time_format.format(target_time_s),
+            linestyle=LINE_STYLES[index_in_series % len(LINE_STYLES)],
+            marker=MARKERS[index_in_series % len(MARKERS)],
+            markersize=3.2,
+            markevery=0.12,
+            label=time_formatter(target_time_s),
         )
 
     for target_time_s, offset_y in [(times_s[0], 9), (times_s[-1], -11)]:
         index = _time_index(time_s, target_time_s)
         axis.annotate(
-            time_format.format(target_time_s),
+            time_formatter(target_time_s),
             xy=(radius_cm[-1], values[index, -1]),
             xytext=(annotation_dx, offset_y),
             textcoords="offset points",
-            color=cmap(norm(target_time_s)),
+            color="black",
             fontsize=8,
             va="center",
             annotation_clip=False,
@@ -169,6 +206,10 @@ def _plot_center_surface(
         time_s,
         center_values,
         color=CENTER_COLOR,
+        linestyle="-",
+        marker="o",
+        markersize=3.2,
+        markevery=0.1,
         linewidth=1.8,
         label="圆心 r=0 cm",
     )
@@ -178,14 +219,17 @@ def _plot_center_surface(
         color=SURFACE_COLOR,
         linewidth=1.8,
         linestyle="--",
+        marker="s",
+        markersize=3.0,
+        markevery=0.1,
         label="表面 r=2 cm",
     )
     axis.fill_between(
         time_s,
         center_values,
         surface_values,
-        color=SURFACE_COLOR,
-        alpha=0.12,
+        color=FILL_COLOR,
+        alpha=0.55,
         linewidth=0,
     )
     axis.annotate(
@@ -193,7 +237,7 @@ def _plot_center_surface(
         xy=(time_s[-1], center_values[-1]),
         xytext=(6, 6),
         textcoords="offset points",
-        color=CENTER_COLOR,
+        color="black",
         fontsize=8,
         annotation_clip=False,
     )
@@ -202,14 +246,14 @@ def _plot_center_surface(
         xy=(time_s[-1], surface_values[-1]),
         xytext=(6, -12),
         textcoords="offset points",
-        color=SURFACE_COLOR,
+        color="black",
         fontsize=8,
         annotation_clip=False,
     )
     if target_value is not None:
         axis.axhline(
             target_value,
-            color="#555555",
+            color="black",
             linewidth=1.0,
             linestyle=":",
             label=target_label or f"达标线 {target_value}",
@@ -268,7 +312,7 @@ def generate_figures(
     source_text = SOURCE_TEXT_BY_PROBLEM[problem]
     long_horizon = problem == 3
     time_unit = "h" if long_horizon else "s"
-    time_format = "{:.1f} h" if long_horizon else "{:.0f} s"
+    time_formatter = _format_hours if long_horizon else _format_seconds
     annotation_dx = -40 if long_horizon else 6
 
     with solution_path.open(encoding="utf-8") as file:
@@ -277,11 +321,17 @@ def generate_figures(
     time_s = np.array(solution["time_s"], dtype=float)
     if long_horizon:
         time_s = time_s / 3600.0
-    profile_times = list(PROFILE_TIMES_BY_PROBLEM[problem])
+    temperature_times = list(TEMPERATURE_PROFILE_TIMES[problem])
+    moisture_times = list(MOISTURE_PROFILE_TIMES[problem])
     if long_horizon:
-        profile_times.append(float(time_s[-1]))
+        moisture_times.append(float(time_s[-1]))
     else:
-        profile_times = [value for value in profile_times if value <= time_s[-1] + 1e-9]
+        temperature_times = [
+            value for value in temperature_times if value <= time_s[-1] + 1e-9
+        ]
+        moisture_times = [
+            value for value in moisture_times if value <= time_s[-1] + 1e-9
+        ]
     radius_cm = np.array(solution["radius_m"], dtype=float) * 100.0
     temperature_c = np.array(solution["temperature_c"], dtype=float)
     moisture = np.array(solution["moisture_dry_basis"], dtype=float)
@@ -295,11 +345,11 @@ def generate_figures(
         radius_cm,
         temperature_c,
         time_s,
-        profile_times,
+        temperature_times,
         "温度 (°C)",
         f"{stage_label}药材径向温度分布",
         time_label=f"时间 ({time_unit})",
-        time_format=time_format,
+        time_formatter=time_formatter,
         annotation_dx=annotation_dx,
     )
     colorbar = fig.colorbar(scalar_map, ax=axis, pad=0.02)
@@ -315,11 +365,11 @@ def generate_figures(
         radius_cm,
         moisture,
         time_s,
-        profile_times,
+        moisture_times,
         "水分浓度 (kg/kg，干基)",
         f"{stage_label}药材径向水分浓度分布",
         time_label=f"时间 ({time_unit})",
-        time_format=time_format,
+        time_formatter=time_formatter,
         annotation_dx=annotation_dx,
     )
     colorbar = fig.colorbar(scalar_map, ax=axis, pad=0.02)
@@ -367,11 +417,11 @@ def generate_figures(
         radius_cm,
         temperature_c,
         time_s,
-        profile_times,
+        temperature_times,
         "温度 (°C)",
         "径向温度分布",
         time_label=f"时间 ({time_unit})",
-        time_format=time_format,
+        time_formatter=time_formatter,
         annotation_dx=annotation_dx,
     )
     fig.colorbar(scalar_map, ax=axes[0, 0], fraction=0.046, pad=0.02).set_label(
@@ -382,11 +432,11 @@ def generate_figures(
         radius_cm,
         moisture,
         time_s,
-        profile_times,
+        moisture_times,
         "水分浓度 (kg/kg，干基)",
         "径向水分浓度分布",
         time_label=f"时间 ({time_unit})",
-        time_format=time_format,
+        time_formatter=time_formatter,
         annotation_dx=annotation_dx,
     )
     fig.colorbar(scalar_map, ax=axes[0, 1], fraction=0.046, pad=0.02).set_label(
@@ -439,9 +489,13 @@ def _generate_problem_4_figures(
     radius_cm = np.array(solution["radius_m"], dtype=float) * 100.0
     moisture = np.array(solution["moisture_dry_basis"], dtype=float)
     temperature = np.array(solution["temperature_c"], dtype=float)
-    profile_times = list(PROFILE_TIMES_BY_PROBLEM[4])
-    profile_times.append(float(time_h[-1]))
-    profile_times = sorted({value for value in profile_times if value <= time_h[-1] + 1e-9})
+    temperature_times = sorted(
+        value for value in TEMPERATURE_PROFILE_TIMES[4] if value <= time_h[-1] + 1e-9
+    )
+    moisture_times = sorted(
+        {*MOISTURE_PROFILE_TIMES[4], float(time_h[-1])}
+    )
+    moisture_times = [value for value in moisture_times if value <= time_h[-1] + 1e-9]
 
     figure_dir.mkdir(parents=True, exist_ok=True)
     _configure_style()
@@ -492,11 +546,11 @@ def _generate_problem_4_figures(
         radius_cm,
         moisture,
         time_h,
-        profile_times,
+        moisture_times,
         "水分浓度 (kg/kg，干基)",
         "收缩条件下药材内部含水率分布（材料坐标）",
         time_label="时间 (h)",
-        time_format="{:.1f} h",
+        time_formatter=_format_hours,
         annotation_dx=-40,
     )
     axis.set_xlabel("材料点初始距离 (cm)")
@@ -545,11 +599,11 @@ def _generate_problem_4_figures(
         radius_cm,
         moisture,
         time_h,
-        profile_times,
+        moisture_times,
         "水分浓度 (kg/kg，干基)",
         "径向含水率分布",
         time_label="时间 (h)",
-        time_format="{:.1f} h",
+        time_formatter=_format_hours,
         annotation_dx=-40,
     )
     axes[0, 0].set_xlabel("材料点初始距离 (cm)")
@@ -559,11 +613,11 @@ def _generate_problem_4_figures(
         radius_cm,
         temperature,
         time_h,
-        profile_times,
+        temperature_times,
         "温度 (°C)",
         "径向温度分布",
         time_label="时间 (h)",
-        time_format="{:.1f} h",
+        time_formatter=_format_hours,
         annotation_dx=-40,
     )
     axes[0, 1].set_xlabel("材料点初始距离 (cm)")

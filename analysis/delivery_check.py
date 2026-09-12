@@ -18,6 +18,7 @@ from pathlib import Path
 
 import numpy as np
 from openpyxl import load_workbook
+from PIL import Image
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
@@ -494,6 +495,85 @@ def _check_paper_draft(results: list[dict]) -> None:
         if image_paths and not missing_images
         else f"失效链接 {missing_images}",
     )
+    canonical = [target for target in image_paths if target.startswith("../outputs/figures/")]
+    _record(
+        results,
+        "图件链接指向规范目录",
+        len(canonical) == len(image_paths),
+        f"{len(canonical)}/{len(image_paths)} 指向 ../outputs/figures/",
+    )
+    stems = [target.rsplit("/", 1)[-1].replace(".png", "") for target in image_paths]
+    expected_stems = set(FIGURES)
+    duplicated = sorted({stem for stem in stems if stems.count(stem) > 1})
+    _record(
+        results,
+        "22 张图在正文与附录中各出现一次",
+        not duplicated and set(stems) == expected_stems,
+        f"共 {len(stems)} 张，重复 {duplicated}，缺失 {sorted(expected_stems - set(stems))}",
+    )
+    body_part, _, appendix_part = text.partition("## 附录 D")
+    body_count = len(re.findall(r"!\[[^\]]*\]\(", body_part))
+    appendix_count = len(re.findall(r"!\[[^\]]*\]\(", appendix_part))
+    _record(
+        results,
+        "正文保留结论图、其余移入附录",
+        body_count == 9 and appendix_count == 13,
+        f"正文 {body_count} 张，附录 {appendix_count} 张",
+    )
+
+
+def _check_grayscale_figures(results: list[dict]) -> None:
+    """黑白打印要求：所有图件必须是灰阶。"""
+    worst = []
+    for stem in FIGURES:
+        path = OUTPUTS / "figures" / f"{stem}.png"
+        if not path.exists():
+            continue
+        with Image.open(path) as image:
+            array = np.asarray(image.convert("RGB"), dtype=float) / 255.0
+        maximum = array.max(axis=2)
+        minimum = array.min(axis=2)
+        saturation = np.where(maximum > 0.0, (maximum - minimum) / np.maximum(maximum, 1e-9), 0.0)
+        worst.append((float((saturation > 0.15).mean()), stem))
+    worst.sort(reverse=True)
+    offenders = [f"{stem}({fraction:.2%})" for fraction, stem in worst if fraction > 0.01]
+    _record(
+        results,
+        "全部图件为黑白（灰阶）",
+        not offenders,
+        f"最高彩色像素占比 {worst[0][0]:.2%}（{worst[0][1]}）" if worst else "未找到图件",
+    )
+
+
+def _check_derived_claims(results: list[dict]) -> None:
+    """文档中的派生量必须能由结果文件复算得到（防止未经验证的陈述）。"""
+    with (OUTPUTS / "result3_solution.json").open(encoding="utf-8") as file:
+        q3 = json.load(file)
+    with (OUTPUTS / "result4_solution.json").open(encoding="utf-8") as file:
+        q4 = json.load(file)
+    t3 = np.array(q3["time_s"], dtype=float)
+    c3 = np.array(q3["moisture_dry_basis"], dtype=float)[:, 0]
+    t4 = np.array(q4["time_s"], dtype=float)
+    c4 = np.array(q4["moisture_dry_basis"], dtype=float)[:, 0]
+    grid = np.arange(3600.0, min(t3[-1], t4[-1]), 60.0)
+    difference = np.interp(grid, t4, c4) - np.interp(grid, t3, c3)
+    index = int(np.nonzero(difference <= 0.0)[0][0])
+    t_prev, t_cur = grid[index - 1], grid[index]
+    d_prev, d_cur = difference[index - 1], difference[index]
+    crossing_hours = (t_prev + (0.0 - d_prev) * (t_cur - t_prev) / (d_cur - d_prev)) / 3600.0
+    _record(
+        results,
+        "派生量：两问圆心曲线交叉时刻",
+        abs(crossing_hours - 40.96) <= 0.01,
+        f"复算 {crossing_hours:.2f} h",
+    )
+    text = (PROJECT_ROOT / "docs" / "paper_draft.md").read_text(encoding="utf-8")
+    _record(
+        results,
+        "论文采用复算后的交叉时刻",
+        "40.96 h" in text and "15 h" not in text,
+        "正文含 40.96 h 且无过期表述" if ("40.96 h" in text and "15 h" not in text) else "正文与复算不一致",
+    )
     section_ids = set(
         re.findall(r"^#{2,3}\s*(\d+(?:\.\d+)?)[\.\s]", text, flags=re.MULTILINE)
     )
@@ -529,6 +609,8 @@ def run_checks() -> list[dict]:
     _check_figures(results)
     _check_documents(results)
     _check_paper_draft(results)
+    _check_grayscale_figures(results)
+    _check_derived_claims(results)
     return results
 
 
