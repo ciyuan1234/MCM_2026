@@ -2,11 +2,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { FileBlob, SpreadsheetFile } from "@oai/artifact-tool";
 
-const [solutionPath, outputPath, templatePath, sheetNamesArg] = process.argv.slice(2);
+const [solutionPath, outputPath, templatePath, sheetNamesArg, lastHeaderArg] = process.argv.slice(2);
 if (!solutionPath || !outputPath || !templatePath || !sheetNamesArg) {
   throw new Error(
     "usage: node analysis/build_two_sheet_workbook.mjs "
-      + "<solution.json> <result.xlsx> <template.xlsx> <sheet1[,sheet2]>",
+      + "<solution.json> <result.xlsx> <template.xlsx> <sheet1[,sheet2]> [lastHeader]",
   );
 }
 
@@ -75,7 +75,11 @@ const outputIndices = distanceCm.map((target) => {
 const nRows = time.length;
 const nColumns = distanceCm.length;
 const lastColumn = columnName(nColumns);
-const header = [["时间\\到药材中心的距离", ...distanceCm]];
+const headerLabels = [...distanceCm];
+if (lastHeaderArg) {
+  headerLabels[headerLabels.length - 1] = lastHeaderArg;
+}
+const header = [["时间\\到药材中心的距离", ...headerLabels]];
 const timeValues = time.map((value) => [value]);
 
 function sampleMatrix(matrix) {

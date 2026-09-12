@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-09-12T13:24:28.397925+08:00",
+  "command": "analysis/q4_convergence.py",
+  "python": "3.9.6",
+  "compare_horizon_hours": 48.0,
+  "target_moisture_dry_basis": 0.15,
+  "runs": [
+    {
+      "label": "dr=0.0625mm,dt=15s",
+      "radial_step_m": 6.25e-05,
+      "time_step_s": 15.0,
+      "t_f_hours": 50.86577522476112,
+      "center_moisture_at_24h": 0.2838575296583441,
+      "moisture_balance_relative_error": 6.675001017741149e-15,
+      "linear_system_residual_max": 1.0441422080074187e-13,
+      "max_picard_iterations": 5.0
+    },
+    {
+      "label": "dr=0.03125mm,dt=15s",
+      "radial_step_m": 3.125e-05,
+      "time_step_s": 15.0,
+      "t_f_hours": 50.84177360409094,
+      "center_moisture_at_24h": 0.28383043527885815,
+      "moisture_balance_relative_error": 5.94061342400709e-15,
+      "linear_system_residual_max": 2.243990347110565e-13,
+      "max_picard_iterations": 5.0
+    },
+    {
+      "label": "dr=0.015625mm,dt=15s",
+      "radial_step_m": 1.5625e-05,
+      "time_step_s": 15.0,
+      "t_f_hours": 50.83598246161882,
+      "center_moisture_at_24h": 0.2838237048363908,
+      "moisture_balance_relative_error": 8.044559669940071e-15,
+      "linear_system_residual_max": 4.4046906734634287e-13,
+      "max_picard_iterations": 5.0
+    },
+    {
+      "label": "dr=0.03125mm,dt=30s",
+      "radial_step_m": 3.125e-05,
+      "time_step_s": 30.0,
+      "t_f_hours": 50.851644018429695,
+      "center_moisture_at_24h": 0.2839096651495406,
+      "moisture_balance_relative_error": 2.376874785901082e-14,
+      "linear_system_residual_max": 2.2413231982044356e-13,
+      "max_picard_iterations": 6.0
+    }
+  ],
+  "comparisons": {
+    "production_label": "dr=0.03125mm,dt=15s",
+    "spatial_reference_label": "dr=0.015625mm,dt=15s",
+    "time_step_label": "dr=0.03125mm,dt=30s",
+    "spatial_t_f_difference_hours": 0.005791142472119759,
+    "time_step_t_f_difference_hours": 0.009870414338756461,
+    "spatial_max_moisture_difference": 5.258075746965296e-05,
+    "time_step_max_moisture_difference": 0.00020354691022939075,
+    "compare_times_hours": [
+      6.0,
+      12.0,
+      18.0,
+      24.0,
+      30.0,
+      36.0,
+      42.0,
+      48.0
+    ]
+  }
+}

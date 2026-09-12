@@ -34,3 +34,10 @@ def test_generate_q3_figures_in_all_formats(tmp_path: Path) -> None:
     assert len(paths) == 18
     for extension in ("png", "pdf", "svg"):
         assert len(sorted(tmp_path.glob(f"*.{extension}"))) == 6
+
+
+def test_generate_q4_figures_in_all_formats(tmp_path: Path) -> None:
+    paths = generate_figures(DEFAULT_SOLUTION_PATHS[4], tmp_path, 4)
+    assert len(paths) == 18
+    for extension in ("png", "pdf", "svg"):
+        assert len(sorted(tmp_path.glob(f"*.{extension}"))) == 6

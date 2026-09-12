@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import tempfile
 from pathlib import Path
 
@@ -21,10 +22,16 @@ from matplotlib.colors import Normalize
 import numpy as np
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.config import ATTACHMENT_2_PATH  # noqa: E402
+from src.interpolators import PiecewiseLinear, read_attachment_2  # noqa: E402
 DEFAULT_SOLUTION_PATHS = {
     1: PROJECT_ROOT / "outputs" / "result1_solution.json",
     2: PROJECT_ROOT / "outputs" / "result2_solution.json",
     3: PROJECT_ROOT / "outputs" / "result3_solution.json",
+    4: PROJECT_ROOT / "outputs" / "result4_solution.json",
 }
 DEFAULT_CONVERGENCE_PATH = PROJECT_ROOT / "outputs" / "q3_convergence.json"
 DEFAULT_SOLUTION_PATH = DEFAULT_SOLUTION_PATHS[1]
@@ -35,8 +42,14 @@ PROFILE_TIMES_BY_PROBLEM = {
     2: [1800.0, 3600.0, 5400.0, 7200.0, 9000.0, 10800.0],
     # 问题 3 的时间轴按小时绘制，末尾时刻在 generate_figures 中动态追加。
     3: [0.5, 6.0, 24.0, 48.0],
+    4: [0.5, 6.0, 12.0, 24.0, 48.0],
 }
-STAGE_LABELS = {1: "预热阶段", 2: "变物性烘干阶段", 3: "长期烘干阶段"}
+STAGE_LABELS = {
+    1: "预热阶段",
+    2: "变物性烘干阶段",
+    3: "长期烘干阶段",
+    4: "收缩烘干阶段",
+}
 SOURCE_TEXT_BY_PROBLEM = {
     1: (
         "数据来源：附件1、附录2；模型：一维径向传热—水分扩散；"
@@ -48,6 +61,10 @@ SOURCE_TEXT_BY_PROBLEM = {
     ),
     3: (
         "数据来源：附件1、附录3；模型：一维径向变物性传热—水分扩散（长期边界取末值）；"
+        "生成脚本：analysis/make_q1_figures.py"
+    ),
+    4: (
+        "数据来源：附件1、附件2、附录4；模型：材料坐标下的收缩圆柱传热—水分扩散；"
         "生成脚本：analysis/make_q1_figures.py"
     ),
 }
@@ -241,6 +258,8 @@ def generate_figures(
 ) -> list[Path]:
     if problem not in DEFAULT_SOLUTION_PATHS:
         raise ValueError(f"unsupported problem: {problem}")
+    if problem == 4:
+        return _generate_problem_4_figures(solution_path, figure_dir)
     if solution_path is None:
         solution_path = DEFAULT_SOLUTION_PATHS[problem]
     if convergence_path is None:
@@ -405,6 +424,212 @@ def generate_figures(
     return paths
 
 
+def _generate_problem_4_figures(
+    solution_path: Path | None,
+    figure_dir: Path,
+) -> list[Path]:
+    """问题 4 专用图组：半径收缩历史 + 材料坐标下的含水率/温度 + 与问题 3 对比。"""
+    if solution_path is None:
+        solution_path = DEFAULT_SOLUTION_PATHS[4]
+    source_text = SOURCE_TEXT_BY_PROBLEM[4]
+    with solution_path.open(encoding="utf-8") as file:
+        solution = json.load(file)
+
+    time_h = np.array(solution["time_s"], dtype=float) / 3600.0
+    radius_cm = np.array(solution["radius_m"], dtype=float) * 100.0
+    moisture = np.array(solution["moisture_dry_basis"], dtype=float)
+    temperature = np.array(solution["temperature_c"], dtype=float)
+    profile_times = list(PROFILE_TIMES_BY_PROBLEM[4])
+    profile_times.append(float(time_h[-1]))
+    profile_times = sorted({value for value in profile_times if value <= time_h[-1] + 1e-9})
+
+    figure_dir.mkdir(parents=True, exist_ok=True)
+    _configure_style()
+    paths: list[Path] = []
+
+    attachment2 = read_attachment_2(ATTACHMENT_2_PATH)
+    radius_curve = PiecewiseLinear(attachment2.time_s, attachment2.radius_cm)
+    grid_time_h = np.linspace(0.0, float(attachment2.time_s[-1]) / 3600.0, 400)
+
+    fig, axis = plt.subplots(figsize=(6.6, 4.4))
+    axis.plot(
+        grid_time_h,
+        radius_curve(grid_time_h * 3600.0),
+        color=CENTER_COLOR,
+        linewidth=1.8,
+        label="分段线性插值",
+    )
+    axis.plot(
+        attachment2.time_s / 3600.0,
+        attachment2.radius_cm,
+        linestyle="none",
+        marker="o",
+        markersize=3.0,
+        color=SURFACE_COLOR,
+        label="附件2 实测",
+    )
+    axis.annotate(
+        f"{attachment2.radius_cm[-1]:.3f} cm",
+        xy=(grid_time_h[-1], attachment2.radius_cm[-1]),
+        xytext=(-60, 10),
+        textcoords="offset points",
+        fontsize=8,
+        color=CENTER_COLOR,
+    )
+    axis.set_xlabel("时间 (h)")
+    axis.set_ylabel("药材半径 (cm)")
+    axis.set_title("药材半径随烘干时间的收缩过程")
+    axis.legend(loc="best")
+    _style_axis(axis)
+    fig.tight_layout(rect=[0, 0.04, 1, 1])
+    _add_source_note(fig, source_text)
+    paths.extend(_save_figure(fig, figure_dir, "fig1_q4_radius_history"))
+    plt.close(fig)
+
+    fig, axis = plt.subplots(figsize=(6.6, 4.4))
+    scalar_map = _plot_profiles(
+        axis,
+        radius_cm,
+        moisture,
+        time_h,
+        profile_times,
+        "水分浓度 (kg/kg，干基)",
+        "收缩条件下药材内部含水率分布（材料坐标）",
+        time_label="时间 (h)",
+        time_format="{:.1f} h",
+        annotation_dx=-40,
+    )
+    axis.set_xlabel("材料点初始距离 (cm)")
+    colorbar = fig.colorbar(scalar_map, ax=axis, pad=0.02)
+    colorbar.set_label("时间 (h)")
+    fig.tight_layout(rect=[0, 0.04, 1, 1])
+    _add_source_note(fig, source_text)
+    paths.extend(_save_figure(fig, figure_dir, "fig2_q4_moisture_profiles"))
+    plt.close(fig)
+
+    fig, axis = plt.subplots(figsize=(6.6, 4.4))
+    _plot_center_surface(
+        axis,
+        time_h,
+        moisture[:, 0],
+        moisture[:, -1],
+        "水分浓度 (kg/kg，干基)",
+        "圆心与表面含水率随时间变化（收缩条件）",
+        time_unit="h",
+        target_value=0.15,
+        target_label="达标线 0.15 kg/kg",
+    )
+    fig.tight_layout(rect=[0, 0.04, 1, 1])
+    _add_source_note(fig, source_text)
+    paths.extend(_save_figure(fig, figure_dir, "fig3_q4_center_surface_moisture"))
+    plt.close(fig)
+
+    fig, axis = plt.subplots(figsize=(6.6, 4.4))
+    _plot_center_surface(
+        axis,
+        time_h,
+        temperature[:, 0],
+        temperature[:, -1],
+        "温度 (°C)",
+        "圆心与表面温度随时间变化（收缩条件）",
+        time_unit="h",
+    )
+    fig.tight_layout(rect=[0, 0.04, 1, 1])
+    _add_source_note(fig, source_text)
+    paths.extend(_save_figure(fig, figure_dir, "fig4_q4_center_surface_temperature"))
+    plt.close(fig)
+
+    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.2))
+    scalar_map = _plot_profiles(
+        axes[0, 0],
+        radius_cm,
+        moisture,
+        time_h,
+        profile_times,
+        "水分浓度 (kg/kg，干基)",
+        "径向含水率分布",
+        time_label="时间 (h)",
+        time_format="{:.1f} h",
+        annotation_dx=-40,
+    )
+    axes[0, 0].set_xlabel("材料点初始距离 (cm)")
+    fig.colorbar(scalar_map, ax=axes[0, 0], fraction=0.046, pad=0.02).set_label("时间 (h)")
+    scalar_map = _plot_profiles(
+        axes[0, 1],
+        radius_cm,
+        temperature,
+        time_h,
+        profile_times,
+        "温度 (°C)",
+        "径向温度分布",
+        time_label="时间 (h)",
+        time_format="{:.1f} h",
+        annotation_dx=-40,
+    )
+    axes[0, 1].set_xlabel("材料点初始距离 (cm)")
+    fig.colorbar(scalar_map, ax=axes[0, 1], fraction=0.046, pad=0.02).set_label("时间 (h)")
+    _plot_center_surface(
+        axes[1, 0],
+        time_h,
+        temperature[:, 0],
+        temperature[:, -1],
+        "温度 (°C)",
+        "圆心与表面温度",
+        time_unit="h",
+    )
+    _plot_center_surface(
+        axes[1, 1],
+        time_h,
+        moisture[:, 0],
+        moisture[:, -1],
+        "水分浓度 (kg/kg，干基)",
+        "圆心与表面含水率",
+        time_unit="h",
+        target_value=0.15,
+        target_label="达标线 0.15 kg/kg",
+    )
+    fig.suptitle("问题4：收缩条件下温度与含水率演化", fontsize=14)
+    fig.tight_layout(rect=[0, 0.04, 1, 0.96])
+    _add_source_note(fig, source_text)
+    paths.extend(_save_figure(fig, figure_dir, "fig5_q4_summary_2x2"))
+    plt.close(fig)
+
+    q3_path = DEFAULT_SOLUTION_PATHS[3]
+    if q3_path.exists():
+        with q3_path.open(encoding="utf-8") as file:
+            q3_solution = json.load(file)
+        q3_time_h = np.array(q3_solution["time_s"], dtype=float) / 3600.0
+        q3_moisture = np.array(q3_solution["moisture_dry_basis"], dtype=float)
+        fig, axis = plt.subplots(figsize=(6.6, 4.4))
+        axis.plot(
+            q3_time_h,
+            q3_moisture[:, 0],
+            color=CENTER_COLOR,
+            linewidth=1.8,
+            label="问题3 固定半径（圆心）",
+        )
+        axis.plot(
+            time_h,
+            moisture[:, 0],
+            color=SURFACE_COLOR,
+            linewidth=1.8,
+            linestyle="--",
+            label="问题4 收缩（圆心）",
+        )
+        axis.axhline(0.15, color="#555555", linewidth=1.0, linestyle=":", label="达标线 0.15 kg/kg")
+        axis.set_xlabel("时间 (h)")
+        axis.set_ylabel("圆心含水率 (kg/kg，干基)")
+        axis.set_title("固定半径与收缩条件的干燥进程对比")
+        axis.legend(loc="best")
+        _style_axis(axis)
+        fig.tight_layout(rect=[0, 0.04, 1, 1])
+        _add_source_note(fig, source_text)
+        paths.extend(_save_figure(fig, figure_dir, "fig6_q4_q3_comparison"))
+        plt.close(fig)
+
+    return paths
+
+
 def _make_convergence_figure(
     convergence_path: Path,
     figure_dir: Path,
@@ -476,7 +701,7 @@ def _make_convergence_figure(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--problem", type=int, choices=[1, 2, 3], default=1)
+    parser.add_argument("--problem", type=int, choices=[1, 2, 3, 4], default=1)
     parser.add_argument("--solution", type=Path, default=None)
     parser.add_argument("--convergence", type=Path, default=None)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_FIGURE_DIR)

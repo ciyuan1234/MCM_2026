@@ -42,4 +42,14 @@
 | 问题 3 短窗口中网格收敛 | `0.125` 对 `0.0625 mm`，2 h 窗口 | `tests/test_q3_solver.py::test_q3_grid_convergence_over_short_window` | 通过 |
 | 问题 3 模板回读 | `result3.xlsx` 单表 `Sheet1` 与内存结果一致 | `tests/test_result3.py` | 通过 |
 | 问题 3 结论追溯 | 结论关键值来自结果文件 | `tests/test_q3_conclusion.py` | 通过 |
+| 问题 4 常数半径回归 | 泛化求解器与 `solve_constant_radius` 完全一致 | `tests/test_q4_solver.py::test_constant_radius_path_is_unchanged_by_generalization` | 通过（逐数组相等） |
+| 问题 4 收缩物理 | 收缩条件比固定几何更快失水 | `tests/test_q4_solver.py::test_shrinking_domain_dries_faster_than_frozen_geometry` | 通过 |
+| 问题 4 圆心判据 | 圆心是空间最大含水率且单调下降 | `tests/test_q4_solver.py`、`tests/test_result4.py` | 通过 |
+| 问题 4 水分守恒 | 表面通量按 `2πR(t)` 计 | `outputs/run_manifest_q4.json`：`5.34e-15` | 通过 |
+| 问题 4 离散残差 | 离散热方程线性系统闭合 | `outputs/run_manifest_q4.json`：`2.24e-13` | 通过 |
+| 问题 4 半径检查 | 单调不增、端点保持、非正半径拒绝 | `tests/test_q4_solver.py` | 通过 |
+| 问题 4 模板回读 | `result4.xlsx` 单表与内存一致，末列 `药材表面` | `tests/test_result4.py` | 通过 |
+| 问题 4 结论追溯 | 结论值来自结果文件，并锁定与问题 3 的差值 | `tests/test_q4_conclusion.py` | 通过 |
+| 问题 4 网格收敛 | `0.03125` 对 `0.015625 mm` | `Δt_f = 0.0058 h`（阈值 0.5 h）；场差 `5.26e-5 kg/kg`（阈值 `1e-3`） | 通过 |
+| 问题 4 时间步收敛 | `15` 对 `30 s` | `Δt_f = 0.0099 h`（阈值 0.0167 h） | 通过 |
 | 问题 4 验证 | 移动边界和半径处理 | 尚未建立 | 待开始 |

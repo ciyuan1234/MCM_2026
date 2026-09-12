@@ -50,6 +50,7 @@ def verify_single_sheet_workbook(
     expected_radius_m: np.ndarray,
     expected_values: np.ndarray,
     tolerance: float = 5e-5,
+    last_header: str | None = None,
 ) -> None:
     verify_workbook(
         path,
@@ -58,6 +59,7 @@ def verify_single_sheet_workbook(
         expected_radius_m,
         (expected_values,),
         tolerance,
+        last_header=last_header,
     )
 
 
@@ -86,6 +88,7 @@ def verify_workbook(
     expected_radius_m: np.ndarray,
     expected_matrices: Sequence[np.ndarray],
     tolerance: float = 5e-5,
+    last_header: str | None = None,
 ) -> None:
     """Read back a result workbook that holds one or more sheets."""
     workbook = load_workbook(path, read_only=True, data_only=True)
@@ -102,6 +105,7 @@ def verify_workbook(
                 expected_radius_m,
                 expected_values,
                 tolerance,
+                last_header=last_header,
             )
     finally:
         workbook.close()
@@ -113,6 +117,7 @@ def _verify_sheet(
     expected_radius_m: np.ndarray,
     expected_values: np.ndarray,
     tolerance: float,
+    last_header: str | None = None,
 ) -> None:
     n_rows = expected_time_s.size
     n_columns = expected_radius_m.size
@@ -131,9 +136,20 @@ def _verify_sheet(
         raise AssertionError(f"{sheet.title}: unexpected A1 header")
 
     expected_distances_cm = np.round(expected_radius_m * 100.0, 1)
-    actual_distances_cm = np.array([float(value) for value in header[1:]])
-    if not np.allclose(actual_distances_cm, expected_distances_cm, atol=1e-12):
-        raise AssertionError(f"{sheet.title}: distance headers do not match")
+    if last_header is None:
+        actual_distances_cm = np.array([float(value) for value in header[1:]])
+        if not np.allclose(actual_distances_cm, expected_distances_cm, atol=1e-12):
+            raise AssertionError(f"{sheet.title}: distance headers do not match")
+    else:
+        if header[-1] != last_header:
+            raise AssertionError(
+                f"{sheet.title}: expected last header {last_header!r}, got {header[-1]!r}"
+            )
+        actual_distances_cm = np.array([float(value) for value in header[1:-1]])
+        if not np.allclose(
+            actual_distances_cm, expected_distances_cm[:-1], atol=1e-12
+        ):
+            raise AssertionError(f"{sheet.title}: distance headers do not match")
 
     actual = np.array(data_rows, dtype=float)
     if not np.allclose(actual[:, 0], expected_time_s, atol=tolerance, rtol=0.0):

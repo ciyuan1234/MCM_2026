@@ -75,6 +75,8 @@ def _build_heat_system(
     air_temperature_k: float,
     dt_s: float,
     h_w_m2_k: float,
+    volume_scale: float = 1.0,
+    surface_scale: float = 1.0,
 ) -> tuple[csr_matrix, np.ndarray]:
     n = grid.n_nodes
     matrix = np.zeros((n, n), dtype=float)
@@ -84,6 +86,7 @@ def _build_heat_system(
         properties.density_kg_m3
         * properties.heat_capacity_j_kg_k
         * grid.node_volume_per_length_m2
+        * volume_scale
         / dt_s
     )
     matrix[np.arange(n), np.arange(n)] += storage
@@ -100,7 +103,7 @@ def _build_heat_system(
         matrix[j + 1, j + 1] += conductance
         matrix[j + 1, j] -= conductance
 
-    boundary_conductance = grid.surface_area_per_length_m * h_w_m2_k
+    boundary_conductance = grid.surface_area_per_length_m * h_w_m2_k * surface_scale
     matrix[-1, -1] += boundary_conductance
     rhs[-1] += boundary_conductance * air_temperature_k
     return csr_matrix(matrix), rhs
@@ -113,12 +116,14 @@ def _build_moisture_system(
     air_moisture: float,
     dt_s: float,
     hm_m_s: float,
+    volume_scale: float = 1.0,
+    surface_scale: float = 1.0,
 ) -> tuple[csr_matrix, np.ndarray]:
     n = grid.n_nodes
     matrix = np.zeros((n, n), dtype=float)
     rhs = np.zeros(n, dtype=float)
 
-    storage = grid.node_volume_per_length_m2 / dt_s
+    storage = grid.node_volume_per_length_m2 * volume_scale / dt_s
     matrix[np.arange(n), np.arange(n)] += storage
     rhs += storage * moisture_old
 
@@ -133,13 +138,13 @@ def _build_moisture_system(
         matrix[j + 1, j + 1] += conductance
         matrix[j + 1, j] -= conductance
 
-    boundary_conductance = grid.surface_area_per_length_m * hm_m_s
+    boundary_conductance = grid.surface_area_per_length_m * hm_m_s * surface_scale
     matrix[-1, -1] += boundary_conductance
     rhs[-1] += boundary_conductance * air_moisture
     return csr_matrix(matrix), rhs
 
 
-def solve_constant_radius(
+def solve_radial(
     *,
     grid: RadialGrid,
     time_s: np.ndarray,
@@ -153,7 +158,16 @@ def solve_constant_radius(
     picard_tolerance: float,
     max_picard_iterations: int,
     track_linear_residual: bool = False,
+    radius_scale: Callable[[float], float] | None = None,
 ) -> SolverResult:
+    """Solve the radial model on a reference grid with optional shrinkage.
+
+    `grid` is expressed in the reference (undeformed) geometry. When
+    `radius_scale` is given, `R_rel(t) = radius_scale(t)` is the ratio of the
+    current radius to the reference radius; control volumes are scaled by
+    `R_rel^2` and the surface flux area by `R_rel`. With `radius_scale=None`
+    the behaviour is identical to the constant-radius model.
+    """
     time = np.asarray(time_s, dtype=float)
     if time.ndim != 1 or time.size < 2:
         raise ValueError("time grid must be one-dimensional with at least two points")
@@ -178,9 +192,22 @@ def solve_constant_radius(
     boundary_heat_integral = 0.0
     boundary_moisture_integral = 0.0
     max_linear_system_residual = 0.0
+    moving = radius_scale is not None
+    accumulated_moisture_change = 0.0
+    accumulated_energy_change = 0.0
 
     for step in range(1, n_times):
         current_time = float(time[step])
+        if moving:
+            radius_ratio = float(radius_scale(current_time))
+            if not np.isfinite(radius_ratio) or radius_ratio <= 0.0:
+                raise ValueError(
+                    f"non-positive or non-finite radius ratio at t={current_time:.6f} s"
+                )
+        else:
+            radius_ratio = 1.0
+        volume_scale = radius_ratio**2
+        surface_scale = radius_ratio
         air_temperature_k = float(boundary_temperature_k(current_time))
         air_moisture = float(boundary_moisture_dry_basis(current_time))
         temperature_old = temperature_k.copy()
@@ -199,6 +226,8 @@ def solve_constant_radius(
                 air_temperature_k,
                 dt_s,
                 h_w_m2_k,
+                volume_scale,
+                surface_scale,
             )
             temperature_solution = spsolve(heat_matrix, heat_rhs)
 
@@ -210,6 +239,8 @@ def solve_constant_radius(
                 air_moisture,
                 dt_s,
                 hm_m_s,
+                volume_scale,
+                surface_scale,
             )
             moisture_solution = spsolve(moisture_matrix, moisture_rhs)
 
@@ -257,29 +288,58 @@ def solve_constant_radius(
 
         boundary_heat_integral += (
             grid.surface_area_per_length_m
+            * surface_scale
             * h_w_m2_k
             * (air_temperature_k - temperature_k[-1])
             * dt_s
         )
         boundary_moisture_integral += (
             grid.surface_area_per_length_m
+            * surface_scale
             * hm_m_s
             * (air_moisture - moisture[-1])
             * dt_s
         )
+        if moving:
+            step_properties = property_function(moisture, temperature_k)
+            accumulated_moisture_change += float(
+                np.sum(
+                    grid.node_volume_per_length_m2
+                    * volume_scale
+                    * (moisture - moisture_old)
+                )
+            )
+            accumulated_energy_change += float(
+                np.sum(
+                    step_properties.density_kg_m3
+                    * step_properties.heat_capacity_j_kg_k
+                    * grid.node_volume_per_length_m2
+                    * volume_scale
+                    * (temperature_k - temperature_old)
+                )
+            )
 
-    final_properties = property_function(moisture_history[-1], temperature_history[-1])
-    internal_energy_change = float(
-        np.sum(
-            final_properties.density_kg_m3
-            * final_properties.heat_capacity_j_kg_k
-            * grid.node_volume_per_length_m2
-            * (temperature_history[-1] - temperature_history[0])
+    if moving:
+        internal_energy_change = accumulated_energy_change
+        internal_moisture_change = accumulated_moisture_change
+    else:
+        final_properties = property_function(
+            moisture_history[-1], temperature_history[-1]
         )
-    )
-    internal_moisture_change = float(
-        np.sum(grid.node_volume_per_length_m2 * (moisture_history[-1] - moisture_history[0]))
-    )
+        internal_energy_change = float(
+            np.sum(
+                final_properties.density_kg_m3
+                * final_properties.heat_capacity_j_kg_k
+                * grid.node_volume_per_length_m2
+                * (temperature_history[-1] - temperature_history[0])
+            )
+        )
+        internal_moisture_change = float(
+            np.sum(
+                grid.node_volume_per_length_m2
+                * (moisture_history[-1] - moisture_history[0])
+            )
+        )
     diagnostics = {
         "boundary_heat_integral_j_per_m": float(boundary_heat_integral),
         "internal_energy_change_j_per_m": internal_energy_change,
@@ -304,4 +364,37 @@ def solve_constant_radius(
         moisture_dry_basis=moisture_history,
         picard_iterations=picard_history,
         diagnostics=diagnostics,
+    )
+
+
+def solve_constant_radius(
+    *,
+    grid: RadialGrid,
+    time_s: np.ndarray,
+    initial_temperature_c: float,
+    initial_moisture_dry_basis: float,
+    boundary_temperature_k: Callable[[float], float],
+    boundary_moisture_dry_basis: Callable[[float], float],
+    property_function: Callable[[np.ndarray, np.ndarray], MaterialProperties],
+    h_w_m2_k: float,
+    hm_m_s: float,
+    picard_tolerance: float,
+    max_picard_iterations: int,
+    track_linear_residual: bool = False,
+) -> SolverResult:
+    """Constant-radius model (problems 1-3); unchanged public behaviour."""
+    return solve_radial(
+        grid=grid,
+        time_s=time_s,
+        initial_temperature_c=initial_temperature_c,
+        initial_moisture_dry_basis=initial_moisture_dry_basis,
+        boundary_temperature_k=boundary_temperature_k,
+        boundary_moisture_dry_basis=boundary_moisture_dry_basis,
+        property_function=property_function,
+        h_w_m2_k=h_w_m2_k,
+        hm_m_s=hm_m_s,
+        picard_tolerance=picard_tolerance,
+        max_picard_iterations=max_picard_iterations,
+        track_linear_residual=track_linear_residual,
+        radius_scale=None,
     )
