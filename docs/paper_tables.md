@@ -10,3 +10,5 @@
 | 表 6 | 问题 4 水分浓度 | 每 6 h 至结束（末行补达标时刻） | 每 0.5 cm，至表面（材料点初始距离口径） | `docs/problem_4_paper_materials.md`、`outputs/result4.xlsx` | 已生成 |
 
 所有表格数值必须来自结果文件或可复算脚本，保留题目要求的四位小数。
+
+表 1～6 的编号按题目规定保持不变；图件编号规则见 `docs/paper_figures.md`（按问编号 图 1-1～4-6）。四问结论与证据对照见 `docs/overview.md`。

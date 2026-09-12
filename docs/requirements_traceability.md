@@ -40,6 +40,7 @@
 | 温度 | °C | K | °C | `src/material.py`、附件 1 |
 | 时间 | s 或 h | s | s 或 h | `src/config.py`、结果模板 |
 | 水分浓度 | kg/kg | kg/kg | kg/kg | 题目、附录 2～4 |
+| 材料点位置（问题 4） | 附件 2 半径 cm | 材料坐标 `ξ∈[0,1]` | 初始距离 cm + `药材表面` | `docs/overview.md`、`docs/notation.md`、`src/export_xlsx.py` |
 
 ## 模型选择依据追溯
 
@@ -50,3 +51,7 @@
 | 非集总模型 | 内部径向温度和水分布不均匀 | `Bi=1.39` | `docs/problem_1_model.md` |
 | 采用 `D(C)` | 附录 2 直接给出浓度依赖扩散系数 | `D(2.55)=4.94e-9 m2/s` | `src/material.py` |
 | 采用 Robin 边界 | 题目给出 `h` 和 `hm` | `Bi=1.39`，传质 Biot 数约 3.24 | `docs/problem_1_model.md` |
+| 问题 2、3 采用附录 3 变物性 | 相位内物性随含水率与温度变化，题目指定问题 2、3 统一使用附录 3 | 3 h 内 `rho/cp/k` 变化 20%～25%，`D` 变化 2.25 倍 | `docs/problem_2_model.md`、`tests/test_material.py` |
+| 问题 3 采用长期边界末值保持 | 附件 1 只到 14400 s；该时刻已处于平台（49.8～50.2 °C） | 三种边界处理差异 `+0.36 h`（EXP-002） | `docs/problem_3_model.md`、`docs/experiments/EXP-002-long-term-boundary/brief.md` |
+| 问题 4 采用材料坐标且不含对流项 | 干基含水率与温度是材料量，材料点相对网格静止；材料坐标形式不需要 `Ṙ` | 忽略收缩会低估 `3.2820 h`（EXP-003）；对流项量级在 2 h 约为扩散项的 33% | `docs/problem_4_model.md`、`docs/experiments/EXP-003-radius-handling/brief.md` |
+| 问题 4 用附录 4 并考虑收缩 | 题目要求问题 4 按附件 2 的移动边界与附录 4 经验公式 | 半径 `2.000→1.198 cm`；`t_f` 由 57.2667 h 降到 50.8500 h | `docs/problem_4_model.md`、`outputs/result4.xlsx` |

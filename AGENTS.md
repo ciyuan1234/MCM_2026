@@ -7,6 +7,7 @@
 执行任何任务前，除本文件外还必须阅读并遵守以下项目记忆：
 
 - `docs/project_plan.md`：整体执行规划与已确认决策。
+- `docs/overview.md`：四问交付后的整体总览（结论、跨问假设与参数对照、数字与证据索引、已知局限）。
 - `docs/decision_log.md`：跨题决策日志。
 - `docs/data_dictionary.md`：附件与结果模板的数据字典。
 - `docs/data_processing.md`：数据处理策略、敏感性结果和结果失效规则。

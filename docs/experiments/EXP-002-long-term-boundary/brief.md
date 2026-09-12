@@ -1,10 +1,12 @@
 # EXP-002：问题 3 长期边界敏感性
 
-- 状态：已批准，待启动
+- 状态：已完成（结论：平滑/均值/波动三种边界处理最大差 `+0.36 h`，基准不变；分支已备份后清理）
 - 日期：2026-09-12
 - 基线提交：`1653da4`
-- 计划分支：`exp/q3-longterm-boundary-002`
-- 计划 worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q3-longterm-boundary-002`
+- 分支：`exp/q3-longterm-boundary-002`（已于 2026-09-12 删除，提交 `c176b06`）
+- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q3-longterm-boundary-002`（已移除）
+- 备份：`/tmp/mcm-backup-exp-q3-longterm-boundary-002.bundle`
+- 结论留档：`docs/problem_3_decision_log.md`「实验结论」、`docs/overview.md` 第 5 节
 
 ## 唯一决策
 
