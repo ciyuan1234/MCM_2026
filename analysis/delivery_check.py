@@ -450,13 +450,12 @@ def _check_paper_draft(results: list[dict]) -> None:
     required_sections = (
         "摘要",
         "问题重述与总体分析",
-        "模型建立",
-        "数值方法与可靠性",
+        "数据预处理",
         "问题一：",
         "问题二：",
         "问题三：",
         "问题四：",
-        "敏感性分析与偏差汇总",
+        "模型检验与敏感性汇总",
         "建模取舍与结论边界",
         "结论",
         "附录",
@@ -466,7 +465,34 @@ def _check_paper_draft(results: list[dict]) -> None:
         results,
         "正文结构完整",
         not absent,
-        "10 节 + 附录齐全" if not absent else f"缺少 {absent}",
+        "9 节 + 附录齐全" if not absent else f"缺少 {absent}",
+    )
+    steps = ("问题分析", "模型建立", "模型求解", "结果与分析")
+    missing_steps = [
+        f"{problem}.{index + 1} {step}"
+        for problem in (3, 4, 5, 6)
+        for index, step in enumerate(steps)
+        if f"### {problem}.{index + 1} {step}" not in text
+    ]
+    _record(
+        results,
+        "四问均按“问题分析→模型建立→模型求解→结果”组织",
+        not missing_steps,
+        "四问结构一致" if not missing_steps else f"缺少 {missing_steps}",
+    )
+    image_paths = re.findall(r"!\[[^\]]*\]\(([^)]+)\)", text)
+    missing_images = [
+        target
+        for target in image_paths
+        if not (path.parent / target).resolve().exists()
+    ]
+    _record(
+        results,
+        "正文图件链接有效",
+        bool(image_paths) and not missing_images,
+        f"共 {len(image_paths)} 张，全部存在"
+        if image_paths and not missing_images
+        else f"失效链接 {missing_images}",
     )
     section_ids = set(
         re.findall(r"^#{2,3}\s*(\d+(?:\.\d+)?)[\.\s]", text, flags=re.MULTILINE)
