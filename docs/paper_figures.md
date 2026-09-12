@@ -29,3 +29,9 @@
 | 图 4 | `fig4_q3_center_surface_moisture` | 圆心与表面含水率及 0.15 达标线 | `result3_solution.json` | 已生成 |
 | 图 5 | `fig5_q3_summary_2x2` | 问题3 结果汇总 | `result3_solution.json` | 已生成 |
 | 图 6 | `fig6_q3_convergence` | `t_f` 的网格与时间步收敛趋势 | `q3_convergence.json` | 已生成 |
+| 图 7 | `fig1_q4_radius_history` | 药材半径随时间的收缩过程 | 附件 2、`result4_solution.json` | 待生成 |
+| 图 8 | `fig2_q4_moisture_profiles` | 收缩条件下径向含水率分布 | `result4_solution.json` | 待生成 |
+| 图 9 | `fig3_q4_center_surface_moisture` | 圆心与表面含水率及达标线 | `result4_solution.json` | 待生成 |
+| 图 10 | `fig4_q4_center_surface_temperature` | 圆心与表面温度变化 | `result4_solution.json` | 待生成 |
+| 图 11 | `fig5_q4_summary_2x2` | 问题 4 结果汇总 | `result4_solution.json` | 待生成 |
+| 图 12 | `fig6_q4_q3_comparison` | 固定半径与收缩条件的干燥进程对比 | `result3_solution.json`、`result4_solution.json` | 待生成 |
