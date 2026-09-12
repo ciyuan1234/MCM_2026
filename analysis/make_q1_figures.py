@@ -90,12 +90,19 @@ SOURCE_TEXT = SOURCE_TEXT_BY_PROBLEM[1]
 def _configure_style() -> None:
     plt.rcParams.update(
         {
+            # 简体中文优先，避免日文变体字形与中英混排跳字。
+            "font.family": "sans-serif",
             "font.sans-serif": [
-                "Arial Unicode MS",
-                "Heiti TC",
+                "Hiragino Sans GB",
                 "Songti SC",
+                "Heiti TC",
+                "Arial Unicode MS",
                 "DejaVu Sans",
             ],
+            "mathtext.fontset": "custom",
+            "mathtext.rm": "Hiragino Sans GB",
+            "mathtext.it": "Hiragino Sans GB:italic",
+            "mathtext.bf": "Hiragino Sans GB:bold",
             "axes.unicode_minus": False,
             "font.size": 10,
             "axes.titlesize": 12,
@@ -235,19 +242,25 @@ def _plot_center_surface(
     axis.annotate(
         f"{center_values[-1]:.2f}",
         xy=(time_s[-1], center_values[-1]),
-        xytext=(6, 6),
+        xytext=(-12, 0),
         textcoords="offset points",
+        ha="right",
+        va="center",
         color="black",
         fontsize=8,
+        bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0},
         annotation_clip=False,
     )
     axis.annotate(
         f"{surface_values[-1]:.2f}",
         xy=(time_s[-1], surface_values[-1]),
-        xytext=(6, -12),
+        xytext=(-12, 0),
         textcoords="offset points",
+        ha="right",
+        va="center",
         color="black",
         fontsize=8,
+        bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0},
         annotation_clip=False,
     )
     if target_value is not None:
@@ -411,7 +424,7 @@ def generate_figures(
     paths.extend(_save_figure(fig, figure_dir, f"fig4_q{problem}_center_surface_moisture"))
     plt.close(fig)
 
-    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.2))
+    fig, axes = plt.subplots(2, 2, figsize=(12.4, 8.8), layout="constrained")
     scalar_map = _plot_profiles(
         axes[0, 0],
         radius_cm,
@@ -462,8 +475,8 @@ def generate_figures(
         target_value=0.15 if long_horizon else None,
         target_label="达标线 0.15 kg/kg" if long_horizon else None,
     )
-    fig.suptitle(f"问题{problem}：{stage_label}温度与水分浓度演化", fontsize=14)
-    fig.tight_layout(rect=[0, 0.04, 1, 0.96])
+    fig.suptitle(f"问题 {problem}：{stage_label}温度与水分浓度演化", fontsize=14)
+    fig.get_layout_engine().set(rect=[0.01, 0.05, 0.99, 0.95])
     _add_source_note(fig, source_text)
     paths.extend(_save_figure(fig, figure_dir, f"fig5_q{problem}_summary_2x2"))
     plt.close(fig)
@@ -548,7 +561,7 @@ def _generate_problem_4_figures(
         time_h,
         moisture_times,
         "水分浓度 (kg/kg，干基)",
-        "收缩条件下药材内部含水率分布（材料坐标）",
+        "收缩条件下药材内部水分浓度分布（材料坐标）",
         time_label="时间 (h)",
         time_formatter=_format_hours,
         annotation_dx=-40,
@@ -568,7 +581,7 @@ def _generate_problem_4_figures(
         moisture[:, 0],
         moisture[:, -1],
         "水分浓度 (kg/kg，干基)",
-        "圆心与表面含水率随时间变化（收缩条件）",
+        "圆心与表面水分浓度随时间变化（收缩条件）",
         time_unit="h",
         target_value=0.15,
         target_label="达标线 0.15 kg/kg",
@@ -593,7 +606,7 @@ def _generate_problem_4_figures(
     paths.extend(_save_figure(fig, figure_dir, "fig4_q4_center_surface_temperature"))
     plt.close(fig)
 
-    fig, axes = plt.subplots(2, 2, figsize=(11.5, 8.2))
+    fig, axes = plt.subplots(2, 2, figsize=(12.4, 8.8), layout="constrained")
     scalar_map = _plot_profiles(
         axes[0, 0],
         radius_cm,
@@ -601,7 +614,7 @@ def _generate_problem_4_figures(
         time_h,
         moisture_times,
         "水分浓度 (kg/kg，干基)",
-        "径向含水率分布",
+        "径向水分浓度分布",
         time_label="时间 (h)",
         time_formatter=_format_hours,
         annotation_dx=-40,
@@ -637,13 +650,13 @@ def _generate_problem_4_figures(
         moisture[:, 0],
         moisture[:, -1],
         "水分浓度 (kg/kg，干基)",
-        "圆心与表面含水率",
+        "圆心与表面水分浓度",
         time_unit="h",
         target_value=0.15,
         target_label="达标线 0.15 kg/kg",
     )
-    fig.suptitle("问题4：收缩条件下温度与含水率演化", fontsize=14)
-    fig.tight_layout(rect=[0, 0.04, 1, 0.96])
+    fig.suptitle("问题 4：收缩条件下温度与水分浓度演化", fontsize=14)
+    fig.get_layout_engine().set(rect=[0.01, 0.05, 0.99, 0.95])
     _add_source_note(fig, source_text)
     paths.extend(_save_figure(fig, figure_dir, "fig5_q4_summary_2x2"))
     plt.close(fig)
@@ -672,7 +685,7 @@ def _generate_problem_4_figures(
         )
         axis.axhline(0.15, color="#555555", linewidth=1.0, linestyle=":", label="达标线 0.15 kg/kg")
         axis.set_xlabel("时间 (h)")
-        axis.set_ylabel("圆心含水率 (kg/kg，干基)")
+        axis.set_ylabel("圆心水分浓度 (kg/kg，干基)")
         axis.set_title("固定半径与收缩条件的干燥进程对比")
         axis.legend(loc="best")
         _style_axis(axis)
@@ -702,51 +715,60 @@ def _make_convergence_figure(
     ]
     time_step_sorted = sorted(time_step_runs, key=lambda run: run["time_step_s"], reverse=True)
 
-    fig, axis = plt.subplots(figsize=(6.6, 4.4))
-    axis.plot(
+    fig, axes = plt.subplots(1, 2, figsize=(11.6, 4.4), layout="constrained")
+    left, right = axes
+
+    left.plot(
         [run["radial_step_m"] * 1000.0 for run in spatial_sorted],
         [run["t_f_hours"] for run in spatial_sorted],
         marker="o",
+        linestyle="-",
         color=CENTER_COLOR,
         linewidth=1.8,
-        label="空间网格收敛（时间步 15 s）",
     )
-    axis.plot(
-        [run["radial_step_m"] * 1000.0 for run in time_step_sorted],
+    for run in spatial_sorted:
+        left.annotate(
+            f"{run['t_f_hours']:.2f}",
+            xy=(run["radial_step_m"] * 1000.0, run["t_f_hours"]),
+            xytext=(0, 9),
+            textcoords="offset points",
+            ha="center",
+            fontsize=8,
+            color="black",
+        )
+    left.set_xscale("log")
+    left.set_xlabel("空间步长 (mm，对数坐标)")
+    left.set_ylabel("$t_f$ (h)")
+    left.set_title("空间网格收敛（时间步固定 15 s）")
+    left.margins(y=0.18)
+    _style_axis(left)
+
+    time_step_values = [run["time_step_s"] for run in time_step_sorted]
+    right.plot(
+        time_step_values,
         [run["t_f_hours"] for run in time_step_sorted],
         marker="s",
         linestyle="--",
         color=SURFACE_COLOR,
         linewidth=1.8,
-        label="时间步收敛（空间步长 0.0625 mm）",
     )
-    for run in spatial_sorted:
-        axis.annotate(
-            f"{run['t_f_hours']:.2f}",
-            xy=(run["radial_step_m"] * 1000.0, run["t_f_hours"]),
-            xytext=(0, 8),
-            textcoords="offset points",
-            ha="center",
-            fontsize=8,
-            color=CENTER_COLOR,
-        )
     for run in time_step_sorted:
-        axis.annotate(
-            f"{run['t_f_hours']:.2f}（dt={run['time_step_s']:.0f} s）",
-            xy=(run["radial_step_m"] * 1000.0, run["t_f_hours"]),
-            xytext=(0, -14),
+        right.annotate(
+            f"{run['t_f_hours']:.2f}",
+            xy=(run["time_step_s"], run["t_f_hours"]),
+            xytext=(0, 9),
             textcoords="offset points",
             ha="center",
             fontsize=8,
-            color=SURFACE_COLOR,
+            color="black",
         )
-    axis.set_xscale("log")
-    axis.set_xlabel("空间步长 (mm，对数坐标)")
-    axis.set_ylabel("烘干时间 t_f (h)")
-    axis.set_title("问题3：烘干时间对网格与时间步的收敛趋势")
-    axis.legend(loc="best")
-    _style_axis(axis)
-    fig.tight_layout(rect=[0, 0.04, 1, 1])
+    right.set_xlabel("时间步 (s)")
+    right.set_title(f"时间步收敛（空间步长 {production_dr_prefix.split('=')[1]}）")
+    right.margins(x=0.35, y=0.18)
+    _style_axis(right)
+
+    fig.suptitle("问题 3：烘干时间的网格与时间步收敛", fontsize=13)
+    fig.get_layout_engine().set(rect=[0.01, 0.06, 0.99, 0.92])
     _add_source_note(fig, source_text)
     paths = _save_figure(fig, figure_dir, "fig6_q3_convergence")
     plt.close(fig)

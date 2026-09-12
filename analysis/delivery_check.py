@@ -545,6 +545,44 @@ def _check_grayscale_figures(results: list[dict]) -> None:
     )
 
 
+def _check_figure_font_coverage(results: list[dict]) -> None:
+    """图件所用的全部汉字必须被所选字体覆盖，避免出现缺字或替代字形。"""
+    from matplotlib import font_manager
+    from fontTools.ttLib import TTFont
+
+    source = (PROJECT_ROOT / "analysis" / "make_q1_figures.py").read_text(encoding="utf-8")
+    characters = sorted({char for char in source if 0x3000 <= ord(char) <= 0x9FFF})
+    font_path = font_manager.findfont(
+        font_manager.FontProperties(
+            family=[
+                "Hiragino Sans GB",
+                "Songti SC",
+                "Heiti TC",
+                "Arial Unicode MS",
+                "DejaVu Sans",
+            ]
+        )
+    )
+    codepoints = set()
+    for index in range(4):
+        try:
+            font = TTFont(font_path, fontNumber=index)
+        except Exception:
+            break
+        cmap = font.getBestCmap() or {}
+        codepoints.update(cmap.keys())
+        if index == 0 and not font_path.lower().endswith(".ttc"):
+            break
+    missing = [char for char in characters if ord(char) not in codepoints]
+    _record(
+        results,
+        "图件字体覆盖全部汉字",
+        not missing,
+        f"字体 {Path(font_path).name}，检查 {len(characters)} 个字符"
+        + (f"，缺字 {missing}" if missing else "，无缺字"),
+    )
+
+
 def _check_derived_claims(results: list[dict]) -> None:
     """文档中的派生量必须能由结果文件复算得到（防止未经验证的陈述）。"""
     with (OUTPUTS / "result3_solution.json").open(encoding="utf-8") as file:
@@ -610,6 +648,7 @@ def run_checks() -> list[dict]:
     _check_documents(results)
     _check_paper_draft(results)
     _check_grayscale_figures(results)
+    _check_figure_font_coverage(results)
     _check_derived_claims(results)
     return results
 
