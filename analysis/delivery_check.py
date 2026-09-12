@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -119,6 +120,21 @@ OVERVIEW_NUMBERS = (
     "3.754e-4",
     "5.26e-5",
 )
+
+# 正文草稿使用排版式科学计数法（如 3.754×10⁻⁴），检查时先归一化再比较数值。
+SUPERSCRIPT_TABLE = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻", "0123456789-")
+DRAFT_NUMBERS = (57.2667, 50.85, 6.4167, 1.5103, 1.7662, 0.0539, 0.0058, 3.754e-4, 5.26e-5)
+
+
+def _normalized_numbers(text: str) -> list[float]:
+    normalized = text.translate(SUPERSCRIPT_TABLE).replace("×10", "e")
+    values = []
+    for token in re.findall(r"\d+\.?\d*(?:e-?\d+)?", normalized):
+        try:
+            values.append(float(token))
+        except ValueError:  # pragma: no cover
+            continue
+    return values
 
 
 def _record(results: list[dict], name: str, ok: bool, detail: str) -> None:
@@ -411,6 +427,49 @@ def _check_documents(results: list[dict]) -> None:
     )
 
 
+def _check_paper_draft(results: list[dict]) -> None:
+    """正文草稿必须存在，且头条数字与总览一致，防止论文与结果脱节。"""
+    path = PROJECT_ROOT / "docs" / "paper_draft.md"
+    if not path.exists():
+        _record(results, "论文正文草稿存在", False, "缺少 docs/paper_draft.md")
+        return
+    text = path.read_text(encoding="utf-8")
+    _record(results, "论文正文草稿存在", True, f"{len(text.splitlines())} 行")
+    values = _normalized_numbers(text)
+    missing = [
+        expected
+        for expected in DRAFT_NUMBERS
+        if not any(abs(value - expected) <= max(abs(expected) * 1e-6, 1e-12) for value in values)
+    ]
+    _record(
+        results,
+        "正文草稿包含全部头条数字",
+        not missing,
+        "全部命中" if not missing else f"缺少 {missing}",
+    )
+    required_sections = (
+        "摘要",
+        "问题重述",
+        "模型假设与符号",
+        "统一模型框架与数值方法",
+        "问题一",
+        "问题二",
+        "问题三",
+        "问题四",
+        "模型检验汇总",
+        "取舍与边界",
+        "结论",
+        "附录",
+    )
+    absent = [section for section in required_sections if section not in text]
+    _record(
+        results,
+        "正文结构完整",
+        not absent,
+        "12 节齐全" if not absent else f"缺少 {absent}",
+    )
+
+
 def run_checks() -> list[dict]:
     results: list[dict] = []
     for problem in (1, 2, 3, 4):
@@ -423,6 +482,7 @@ def run_checks() -> list[dict]:
     _check_headline_numbers(results)
     _check_figures(results)
     _check_documents(results)
+    _check_paper_draft(results)
     return results
 
 
