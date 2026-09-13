@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 四问总览
+    url: https://github.com/ciyuan1234/MCM_2026/blob/main/docs/overview.md
+    about: 先核对头条数字、假设和局限，再开 Issue
+  - name: 论文草稿
+    url: https://github.com/ciyuan1234/MCM_2026/blob/main/docs/paper_draft.md
+    about: 写作结构与各问结论

@@ -115,23 +115,23 @@
 
 **论文表格与图件**：`docs/paper_tables.md`（表 1～6）、`docs/paper_figures.md`（按问编号 图 1-1～4-6）。
 
-**复现命令**
+**复现命令**（在仓库根目录、已安装 `requirements.txt` 的环境中执行）
 
 ```bash
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/solve.py --problem 1
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/solve.py --problem 2
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/solve.py --problem 3
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/solve.py --problem 4
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/make_q1_figures.py --problem 3
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/make_q1_figures.py --problem 4
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python -m pytest -q
+python analysis/solve.py --problem 1
+python analysis/solve.py --problem 2
+python analysis/solve.py --problem 3
+python analysis/solve.py --problem 4
+python analysis/make_q1_figures.py --problem 3
+python analysis/make_q1_figures.py --problem 4
+python -m pytest -q
 ```
 
 收敛复算（耗时较长，默认不进入测试套件）：
 
 ```bash
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/q3_convergence.py
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/q4_convergence.py
+python analysis/q3_convergence.py
+python analysis/q4_convergence.py
 ```
 
 **当前剩余工作**：四问结果均已获用户确认；实验分支均已备份（`/tmp/mcm-backup-*.bundle`）后清理；论文全文与排版待官方格式文件（GAP-013），潜热影响尚未量化（GAP-025）。

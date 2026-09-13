@@ -32,7 +32,7 @@ flowchart LR
     AirT -- "对流换热 (h)" --> SurfT
     SurfT -- "内部导热 (k)" --> DiffT
     DiffC -- "内部水分扩散 (D)" --> SurfC
-    SurfC -- "对流传质 (hm)" --> AirC/Users/a1-6/Desktop/MCM agent/A题.pdf
+    SurfC -- "对流传质 (hm)" --> AirC
 ```
 
 整个物理过程由两条相互交织的链条驱动：

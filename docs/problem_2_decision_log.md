@@ -21,7 +21,7 @@
 实现入口：
 
 ```bash
-.venv/bin/python analysis/solve.py --problem 2
+python analysis/solve.py --problem 2
 ```
 
 结果：

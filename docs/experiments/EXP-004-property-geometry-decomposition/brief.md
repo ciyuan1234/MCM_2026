@@ -4,7 +4,7 @@
 - 日期：2026-09-12
 - 基线提交：`c8c3f27`
 - 分支：`exp/q4-property-geometry-004`
-- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q4-property-geometry-004`
+- Worktree：`exp-q4-property-geometry-004`
 
 ## 背景与动机
 

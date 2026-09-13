@@ -68,9 +68,9 @@
 ## 6. 复现自检
 
 ```bash
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/delivery_check.py
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/delivery_check.py --strict
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python -m pytest -q
+python analysis/delivery_check.py
+python analysis/delivery_check.py --strict
+python -m pytest -q
 ```
 
 任何一项 FAIL 都必须先修复再提交；若 FAIL 属于上表已接受的限制，必须在清单中显式标注，不得静默忽略。

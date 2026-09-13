@@ -111,9 +111,9 @@ $$\frac{\partial C}{\partial t} = \frac{1}{\xi R(t)^2}\frac{\partial}{\partial \
 ## 12. 可复现命令与结果索引（待实现后生效）
 
 ```bash
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/solve.py --problem 4
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/q4_convergence.py
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python -m pytest -q
+python analysis/solve.py --problem 4
+python analysis/q4_convergence.py
+python -m pytest -q
 ```
 
 - 结果：`outputs/result4.xlsx`、`outputs/result4_solution.json`、`outputs/run_manifest_q4.json`

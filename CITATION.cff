@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: "CUMCM 2026 Problem A: Herb Drying"
+message: If you use this repository, please cite it as below.
+type: software
+authors:
+  - name: "ciyuan1234"
+license: MIT
+repository-code: "https://github.com/ciyuan1234/MCM_2026"
+url: "https://github.com/ciyuan1234/MCM_2026"
+abstract: >
+  Reproducible one-dimensional radial heat and moisture diffusion
+  solver for CUMCM 2026 Problem A (herb drying), covering constant
+  properties, variable properties, a full-cycle endpoint, and a
+  shrinking-boundary model.
+keywords:
+  - CUMCM
+  - mathematical modeling
+  - heat transfer
+  - moisture diffusion
+  - finite volume
+  - herb drying
+version: "1.0.0"
+date-released: "2026-09-12"

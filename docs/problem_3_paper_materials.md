@@ -116,8 +116,8 @@ $$\frac{\partial C}{\partial t} = \frac{1}{r}\frac{\partial}{\partial r}\left(r 
 ## 13. 可复现命令与结果索引
 
 ```bash
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/solve.py --problem 3
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python -m pytest -q
+python analysis/solve.py --problem 3
+python -m pytest -q
 ```
 
 - 结果：`outputs/result3.xlsx`、`outputs/result3_solution.json`、`outputs/run_manifest_q3.json`

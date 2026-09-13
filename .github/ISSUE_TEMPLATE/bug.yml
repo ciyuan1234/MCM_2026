@@ -1,0 +1,39 @@
+name: 缺陷
+description: 结果、代码或文档与预期不符
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: problem
+    attributes:
+      label: 对应哪一问
+      options:
+        - 问题 1
+        - 问题 2
+        - 问题 3
+        - 问题 4
+        - 跨问 / 基础设施
+        - 文档
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望
+      placeholder: 根据 overview.md 或测试，这里应该是什么
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: 复现命令
+      render: bash
+      placeholder: python analysis/solve.py --problem 1
+    validations:
+      required: true

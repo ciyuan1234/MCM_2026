@@ -4,7 +4,7 @@
 - 日期：2026-09-12
 - 基线提交：`1653da4`
 - 分支：`exp/q3-independent-impl-001`（已于 2026-09-12 删除，提交 `e909002`）
-- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q3-independent-impl-001`（已移除）
+- Worktree：`exp-q3-independent-impl-001`（已移除）
 - 备份：`/tmp/mcm-backup-exp-q3-independent-impl-001.bundle`
 - 结论留档：`docs/problem_3_decision_log.md`「实验结论」、`docs/overview.md` 第 5 节
 

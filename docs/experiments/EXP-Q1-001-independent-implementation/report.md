@@ -24,9 +24,9 @@
 ## 3. 运行命令
 
 ```bash
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/exp_q1_explicit_fdm.py --dr-m 0.001 --dt-s 0.25
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python analysis/exp_q1_explicit_fdm.py --dr-m 0.0005 --dt-s 0.0625
-/Users/a1-6/Desktop/MCM\ agent/.venv/bin/python -m pytest tests/test_exp_q1_explicit_fdm.py -q
+python analysis/exp_q1_explicit_fdm.py --dr-m 0.001 --dt-s 0.25
+python analysis/exp_q1_explicit_fdm.py --dr-m 0.0005 --dt-s 0.0625
+python -m pytest tests/test_exp_q1_explicit_fdm.py -q
 ```
 
 ## 4. Candidate 与生产基准的直接差异

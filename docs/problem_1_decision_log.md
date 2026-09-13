@@ -27,13 +27,13 @@
 实现入口：
 
 ```bash
-.venv/bin/python analysis/solve.py --problem 1
+python analysis/solve.py --problem 1
 ```
 
 测试：
 
 ```bash
-.venv/bin/python -m pytest -q
+python -m pytest -q
 ```
 
 结果：当前完整测试套件 26 项通过，其中包含问题 1、问题 2 的数值、数据完整性、模板回读和结论追溯测试。

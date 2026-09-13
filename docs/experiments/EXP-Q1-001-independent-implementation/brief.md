@@ -4,7 +4,7 @@
 - 日期：2026-09-11
 - 基线提交：`9439b71`
 - 分支：`exp/q1-explicit-fdm-001`（已于 2026-09-11 删除）
-- Worktree：`/Users/a1-6/Desktop/mcm-agent-worktrees/exp-q1-explicit-fdm-001`（已移除）
+- Worktree：`exp-q1-explicit-fdm-001`（已移除）
 - 备份：`/tmp/mcm-backup-exp-q1-explicit-fdm-001.bundle`
 
 ## 唯一决策
