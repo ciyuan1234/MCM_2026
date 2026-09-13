@@ -25,9 +25,9 @@ Open implementation of **CUMCM 2026 Problem A**. A freshly harvested cylindrical
 | Q | Model | Horizon | Answer |
 | --- | --- | --- | --- |
 | 1 | Appendix-2 constant properties | 0–30 min | Surface heats and dries first; at 1800 s the center is still **2.5500 kg/kg** |
-| 2 | Appendix-3 variable properties | 0–3 h | Heat transfer is done (radial \(\Delta T = 0.117^\circ\mathrm{C}\)); center moisture **1.7662 kg/kg**, far from target |
-| 3 | Variable properties + long-term boundary | full cycle | Time to \(C\le 0.15\) at the center: **\(t_f = 57.2667\) h** |
-| 4 | Material-coordinate shrinking cylinder | full cycle | Radius \(2.000\to 1.198\) cm gives **\(t_f = 50.8500\) h**, **11.2% faster** |
+| 2 | Appendix-3 variable properties | 0–3 h | Heat transfer is done (radial ΔT = 0.117 °C); center moisture **1.7662 kg/kg**, far from target |
+| 3 | Variable properties + long-term boundary | full cycle | Time to C ≤ 0.15 kg/kg at the center: **t_f = 57.2667 h** |
+| 4 | Material-coordinate shrinking cylinder | full cycle | Radius 2.000 → 1.198 cm gives **t_f = 50.8500 h**, **11.2% faster** |
 
 Question 4 is the industrial question: **does shrinkage speed drying up or slow it down?** Shorter path accelerates; denser tissue decelerates. Decomposition: properties **+71.9 h**, geometry **−78.3 h**. The two large effects nearly cancel.
 
@@ -42,7 +42,7 @@ flowchart LR
 
 - Closed four-question pipeline, not a half-finished notebook.
 - Headline numbers are pinned to `outputs/result{1..4}.xlsx` and `tests/test_q*_conclusion.py`.
-- Mass-balance residuals at \(10^{-13}\); grid/step convergence for Q3/Q4; independent recodes in `docs/experiments/`.
+- Mass-balance residuals at 1e-13; grid/step convergence for Q3/Q4; independent recodes in `docs/experiments/`.
 - 22 grayscale paper figures × PNG/PDF/SVG, with units, sources, and generator scripts.
 - SI units in the kernel, a single entry point `analysis/solve.py`, and 60 pytest cases.
 
