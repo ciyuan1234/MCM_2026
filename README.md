@@ -4,7 +4,6 @@
 
 <p align="center">
   <a href="https://github.com/ciyuan1234/MCM_2026/stargazers"><img src="https://img.shields.io/github/stars/ciyuan1234/MCM_2026?style=flat-square&color=e8c872" alt="Stars"></a>
-  <a href="https://github.com/ciyuan1234/MCM_2026/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/ciyuan1234/MCM_2026/ci.yml?style=flat-square&label=CI" alt="CI"></a>
   <img src="https://img.shields.io/badge/CUMCM-2026%20A%20题-1f6feb?style=flat-square" alt="CUMCM 2026 A">
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/tests-60%20passed-2ea44f?style=flat-square" alt="60 tests">
@@ -125,7 +124,7 @@ MCM_2026/
 
 ## 验证与局限
 
-本地完整测试（含结论追溯）共 **60 项通过**。CI 跑不依赖超大 `*_solution.json` 的快测子集。
+本地完整测试（含结论追溯）共 **60 项通过**。没有细网格 `*_solution.json` 时，可只跑快测子集（见 [`CONTRIBUTING.md`](CONTRIBUTING.md)）。
 
 | 检查 | 问题 1 | 问题 2 | 问题 3 | 问题 4 |
 | --- | ---: | ---: | ---: | ---: |

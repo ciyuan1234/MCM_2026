@@ -52,3 +52,5 @@
 ## 资源文件
 
 横幅与社交预览图：[assets/banner.png](assets/banner.png)。
+
+GitHub Actions 快测工作流模板：[github-actions-ci.yml](github-actions-ci.yml)（复制到 `.github/workflows/ci.yml` 即可启用）。

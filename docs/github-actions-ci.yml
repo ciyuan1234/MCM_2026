@@ -1,0 +1,29 @@
+# Copy this file to .github/workflows/ci.yml, then push with a token that has the `workflow` scope.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Fast tests (no large solution JSON)
+        run: |
+          python -m pytest -q \
+            tests/test_units.py \
+            tests/test_material.py \
+            tests/test_interpolators.py \
+            tests/test_solver.py \
+            tests/test_export.py \
+            tests/test_q3_convergence.py \
+            tests/test_q4_convergence.py

@@ -4,7 +4,6 @@
 
 <p align="center">
   <a href="https://github.com/ciyuan1234/MCM_2026/stargazers"><img src="https://img.shields.io/github/stars/ciyuan1234/MCM_2026?style=flat-square&color=e8c872" alt="Stars"></a>
-  <a href="https://github.com/ciyuan1234/MCM_2026/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/ciyuan1234/MCM_2026/ci.yml?style=flat-square&label=CI" alt="CI"></a>
   <img src="https://img.shields.io/badge/CUMCM-2026%20Problem%20A-1f6feb?style=flat-square" alt="CUMCM 2026 A">
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/tests-60%20passed-2ea44f?style=flat-square" alt="60 tests">
